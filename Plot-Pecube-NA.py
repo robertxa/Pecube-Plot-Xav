@@ -131,7 +131,7 @@ def plotcouple(datac, dataplot, couple, nbplotx, nbploty, param):
 	INPUT:
 	  datac = array to plot
 	  dataplot = list of couple to plot (ex : [(1,2),(3,4)])
-	  couple = couple of paramters to plot (ex : (1,2))
+	  couple = couple of parameters to plot (ex : (1,2))
 	  nbplotx = number of subplots in the x direction 
 	  nbploty = number of subplots in the y direction
 	  param = list of the name of the parameters that will be plotted
