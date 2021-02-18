@@ -20,11 +20,12 @@
 	 This code is to plot scatter and pdf plots from the nab.out file
 	 
      History:
-        - version 0.0.1 (2021/02/11): initial preliminary release
+        - version 1.0.1 (2021/02/18): initial preliminary release
         - 
 
 	 TODOS:
-        - 
+        - Check if the couples of parameters to plot is also the couples used for 2D marginals computed
+        -
 
 """
 # Do divisions with Reals, not with integers
@@ -72,14 +73,13 @@ dataplot = [(1,2), (3,4), (5,6), (7,8)]
 
 # Give the name of the file with the inversion results
 # Usually is NA_Results and nab.out
-# /!\ THE FILE HAS TO BE LOCATED INSIDE THE "NA" FOLDER /!\
 #inv_results = 'NA/NA_results.txt'
 inv_results = 'NA/NA_results.csv'
 data_nab = 'NA/NAB/nab.out'
 
 # Choose if you want the PDFs (Probability Density Function) 
 # plots 1D or 2D contour with the misfit plots
-PDF_1D = 'yes'
+PDF_1D = True
 pdf1d_results = 'NA/NAB/PDF_DATA.txt'
 
 # Set the space between ticks for x and y axes for each parameters
@@ -100,7 +100,7 @@ size_mis = 50
 
 #Give the size of the number of bins for the 2d pdfs
 size_2d = 100
-PDF_2D = 'yes'
+PDF_2D = True
 pdf2d_results = 'NA/NAB/PDF_2D_DATA.txt'
 
 ##########################################################################################
@@ -156,8 +156,13 @@ def read_NABout(data_nab, pdf1d_results, pdf2d_results, dataplot):
         for i in range(0, Nparam, 1):
             # Find indexes in lines of the
             #indexparam = lines.index('  Marginal for parameter :           ' + str(i+1) + '\n')
-            indexparam = [item.replace(u' ', u'') for item in lines].index('Marginalforparameter:' + str(i+1) +'\n')
-            #print(indexparam, indexparam2)
+            zzz = 0
+            indexparam = 0
+            for zzz, z_str in enumerate([item.replace(u' ', u'') for item in lines]):
+                if z_str == 'Marginalforparameter:' + str(i+1) +'\n':
+                    indexparam = zzz
+            #indexparam = [item.replace(u' ', u'') for item in lines].index('Marginalforparameter:' + str(i+1) +'\n')
+        
             # Copy the lines until the marginal i+1 in the variable ?
             for k in range (indexparam + 2, indexparam + 2 + Nbins1D):
                 data1D[k - indexparam -2, 2*i:2*i+2] = lines[k].split()[0:2]
@@ -176,6 +181,11 @@ def read_NABout(data_nab, pdf1d_results, pdf2d_results, dataplot):
             try:
                 #indexparam = lines.index('  2D Marginal for parameters :           ' + str(dataplot[i][0]) + '           ' + str(dataplot[i][1]) + '\n')
                 indexparam = [item.replace(u' ', u'') for item in lines].index('2DMarginalforparameters:' + str(dataplot[i][0]) + str(dataplot[i][1]) + '\n')
+                zzz = 0
+                indexparam = 0
+                for zzz, z_str in enumerate([item.replace(u' ', u'') for item in lines]):
+                    if z_str == '2DMarginalforparameters:' + str(dataplot[i][0]) + str(dataplot[i][1]) + '\n':
+                        indexparam = zzz
             except ValueError:
                 raise ValueError('2D pdf couple asked do not agree with 2D pdf computed (%s, %s) ' %(str(dataplot[i][0]), str(dataplot[i][1])))
             # Copy the lines until the marginal i+1 in the variable ?
@@ -209,10 +219,23 @@ def multiplot(param, nb_var, plot,
 
     Args:
         param ([type]): [description]
-        tick_space ([type]): [description]
-        inv_results ([type]): [description]
+        nb_var ([type]): [description]
         plot ([type]): [description]
+        tick_space ([type]): [description]
+        pdf1d_results ([type]): [description]
+        pdf2d_results ([type]): [description]
+        size_x (int, optional): [description]. Defaults to 15.
+        size_y (int, optional): [description]. Defaults to 15.
+        size_m (int, optional): [description]. Defaults to 15.
+        size_plo (int, optional): [description]. Defaults to 50.
+        size_mis (int, optional): [description]. Defaults to 50.
+        size_2d (int, optional): [description]. Defaults to 100.
+        PDF_1D (str, optional): [description]. Defaults to 'yes'.
+        PDF_2D (str, optional): [description]. Defaults to 'yes'.
         i_param ([type], optional): [description]. Defaults to None.
+
+    Raises:
+        ValueError: [description]
     """
 
     # Define dictionnary to manage tick format
@@ -305,11 +328,11 @@ def multiplot(param, nb_var, plot,
     #################
     
     # Load the na_bayes data
-    if PDF_2D == 'yes' or PDF_1D == 'yes': 
+    if PDF_2D or PDF_1D: 
         pdf_data = np.loadtxt(pdf1d_results, unpack = True)
 
     #Start 1D PDF or/and 2D PDF    
-    if PDF_2D == 'yes':
+    if PDF_2D:
         print('Build 2d graphs')  
 
         # Load the 2D pdf data and assing variables to it
@@ -326,13 +349,16 @@ def multiplot(param, nb_var, plot,
 
         try:
             CS = plt.contour(val_xx2d, val_yy2d, val_z2d.T, 
-                             levels = [0.4], cmap = 'CMRmap')
+                             #levels = [0.4], cmap = 'CMRmap')
+                             #levels = 3, cmap = 'CMRmap')
+                             #levels = 3, cmap = 'gray_r')
+                             levels = 3, cmap = 'hot')
             plt.clabel(CS, inline = 2, fontsize = 12)
         except UserWarning:
             print('WARNING: No contour level')
     
     # Start 1D PDF or/and 2D PDF    
-    if PDF_1D == 'yes':
+    if PDF_1D:
         print('build 1d graphs')
         
         # Position the 2 new figures     
@@ -359,8 +385,6 @@ def multiplot(param, nb_var, plot,
           
             axHistx.set_ylim(ymin = 0)
             axHisty.set_xlim(xmin = 0)
-    #param_1 = param[plot[0]-1]
-    #param_2 = param[plot[1]-1]
     
     #nab_best=np.loadtxt('NA/nab_best.txt', unpack = True)
     
@@ -371,6 +395,7 @@ def multiplot(param, nb_var, plot,
     else: 
         plt.savefig('NA/Graphs/PDF.pdf')
         print('Plotting : ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (NA/Graphs/PDF.pdf)')
+    # If you want to plot on screen each plot
     #plt.show()
     
     return
@@ -384,26 +409,36 @@ if __name__ == u'__main__':
     main code
     """
 
-    # Check that nab.out exists
-    if not os.path.isfile(data_nab): raise NameError('ERROR : File {FileNa} does not exist'.format(FileNa=str(data_nab)))
     # Check that NA_results exists
-    if not os.path.isfile(inv_results): raise NameError('ERROR : File {FileNa} does not exist'.format(FileNa=str(inv_results)))
-    if not os.path.exists('NA/Graphs'): os.mkdir('NA/Graphs')
-
-    # Build Nab files for plotting
-    read_NABout(data_nab, pdf1d_results, pdf2d_results, dataplot)
-
+    if not os.path.isfile(inv_results):
+        raise NameError('ERROR: File {FileNa} does not exist'.format(FileNa=str(inv_results)))
     # Loading the data, calling as many variables as given in param + 1 for the misfit
     if inv_results[-3:] == 'txt':
-        nb_var = np.zeros(len(param) + 1)
+        #nb_var = np.zeros(len(param) + 1)
         nb_var = np.loadtxt(inv_results, unpack = True)
     elif inv_results[-3:] == 'csv':
         nb_var = np.genfromtxt(inv_results, delimiter = ',', skip_header = 1, unpack = True)
-        np.savetxt('test.txt', nb_var)
     else:
         raise ImportError('NA_results format not supported...\n\n')
+    
+    # Check if misfits are not with NaN or infinite values...
+    # Raise error if this is the case, and recheck your inversion parameters
+    if np.any(np.isnan(nb_var)) or not np.all(np.isfinite(nb_var)):
+        print("\nInfinity: ", np.inf in nb_var)
+        raise ValueError('NA_results.csv contains NaN or infinite numbers...\n\n')
+
+    # Check that nab.out exists
+    if not os.path.isfile(data_nab): 
+        print ('WARNING: File {FileNa} does not exist\n\n'.format(FileNa=str(data_nab)))
+        PDF_1D = False
+        PDF_2D = False
+
+    # Build Nab files for plotting
+    if PDF_1D or PDF_2D:
+        read_NABout(data_nab, pdf1d_results, pdf2d_results, dataplot)
 
     # plot data
+    if not os.path.exists('NA/Graphs'): os.mkdir('NA/Graphs')
     if len(dataplot) > 1:
         for i in range(len(dataplot)):
             print()
