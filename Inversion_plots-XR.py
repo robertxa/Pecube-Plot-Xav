@@ -24,8 +24,8 @@
         - 
 
 	 TODOS:
-        - Check if the couples of parameters to plot is also the couples used for 2D marginals computed
-        -
+        - 
+        - 
 
 """
 # Do divisions with Reals, not with integers
@@ -68,7 +68,7 @@ param = ['Ignimbrite filling time (Ma)',
 # dataplot = [(1,3)] -->  plot=(1,3)
 # If you plot 2D pdfs (contours), please, CHECK that the couple of parameter to plot
 #     are the same and in the same order than in the nab.in file.
-#     This python script DOES NOT check that!
+#     This python script check it and will insult you if this is not compatible !!!
 dataplot = [(1,2), (3,4), (5,6), (7,8)]
 
 # Give the name of the file with the inversion results
@@ -78,9 +78,9 @@ inv_results = 'NA/NA_results.csv'
 data_nab = 'NA/NAB/nab.out'
 
 # Choose if you want the PDFs (Probability Density Function) 
-# plots 1D or 2D contour with the misfit plots
+# plots 1D or 2D contour with the misfit plots (True of False)
 PDF_1D = True
-pdf1d_results = 'NA/NAB/PDF_DATA.txt'
+PDF_2D = True
 
 # Set the space between ticks for x and y axes for each parameters
 # (same order than the list param)
@@ -98,147 +98,162 @@ size_m = 15
 size_plo = 50
 size_mis = 50
 
-#Give the size of the number of bins for the 2d pdfs
-size_2d = 100
-PDF_2D = True
-pdf2d_results = 'NA/NAB/PDF_2D_DATA.txt'
+# If you want to print the pdfs in a text file, just modify the 2 next lines
+pdf1d_results = None #'NA/NAB/PDF_DATA.txt'
+pdf2d_results = None #'NA/NAB/PDF_2D_DATA.txt'
 
 ##########################################################################################
-def read_NABout(data_nab, pdf1d_results, pdf2d_results, dataplot):
+def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
     """
     Read the nad.out file and write the PDF_DATA.txt and PDF_2D_DATA.txt
     
     INPUTS:
     	data_nab       : path and name of the nab.out file
-        pdf1d_results  : path and name of the file with the PDF 1D data
-        pdf2d_results  : path and name of the file with the PDF 2D data
         dataplot       : list of couple of variables we want to plot against each other
+        pdf1d_results  : path and name of the file with the PDF 1D data if file saved ;
+                         None by default
+        pdf2d_results  : path and name of the file with the PDF 2D data if file saved ;
+                         None by default
     
     OUTPUTS:
-    	For the moment, no outputs
+    	data1D : 1D marginals
+        data2D : 2D marginals
     		
     USAGE:
-        read_NABout(data_nab, pdf1d_results, pdf2d_results, dataplot)
+        data1D, data2D = read_NABout(data_nab, dataplot, pdf1d_results, pdf2d_results)
     
     Author: Xavier Robert, Grenoble 2021/02/10
     
     """
-    # define test variable
-    test = True
 
     # Open the nab.out file
     f1r = open(data_nab, 'r')
 
     # Read line to line
     lines = f1r.readlines()
+    test_couple = []
     for line in lines:
         # Get number of parameters
         if u'Number of dimensions' in line: 
             Nparam = int(line[-13:len(line)])
-            if test: print('Nparam: ', Nparam)
         if u'Number of bins per axis for 1D marginals' in line: 
             Nbins1D = int(line[-13:len(line)])
-            if test: print('Nbins1D: ', Nbins1D)
 
         # Get number of parameters 2D
         if u'Number of 2D marginal pdfs to be calculated' in line: 
             Nparam2D = int(line[-13:len(line)])
-            if test: print('Nparam2D: ', Nparam2D)
+            # Check if the number of plots asked is compatible with the number of 2D marginals computed
+            if len(dataplot) > Nparam2D:
+                raise ValueError('ERROR: Number of plots (%s) > Number of 2D marginals computed (%s)' %(len(dataplot), Nparam2D))
+        # Record the 2D marginals couple present in the nab.out file
+        if u'2D Marginal for parameters :' in line:
+            test_couple.append((int(line.split()[-2]), int(line.split()[-1])))
+        # Find the number of bins for 2D marginals
         if u'Number of bins per axis for 2D marginals' in line: 
             Nbins2D = int(line[-13:len(line)])
-            if test: print('Nbins2D: ', Nbins2D)
+
+    # check if the couples asked to plot are OK with the marginals computed
+    for elem in dataplot:
+        if elem not in test_couple:
+            raise ValueError('ERROR: F*** You did nto read all the comments in the beginning !!\n2D plot %s not in 2D marginals computed...\n\t\tPlease, rerun NAD with correct couples\n' %(str(elem)))
     
-    if os.path.isfile(pdf1d_results):
-        print('\t\tWARNING: File %s already exists \n \t\tI do not erase it\n' %(pdf1d_results))
-    else:
-        # intitiate variable
-        data1D = np.zeros((Nbins1D, 2*Nparam))
-        for i in range(0, Nparam, 1):
-            # Find indexes in lines of the
-            #indexparam = lines.index('  Marginal for parameter :           ' + str(i+1) + '\n')
+    # intitiate variable
+    data1D = np.zeros((Nbins1D, 2*Nparam))
+    for i in range(0, Nparam, 1):
+        # Find index of the beginning of the last iteration for the parameter i+1
+        zzz = 0
+        indexparam = 0
+        for zzz, z_str in enumerate([item.replace(u' ', u'') for item in lines]):
+            if z_str == 'Marginalforparameter:' + str(i+1) +'\n':
+                indexparam = zzz
+        # Copy the lines until the marginal i+1 in the variable data1D
+        for k in range (indexparam + 2, indexparam + 2 + Nbins1D):
+            data1D[k - indexparam -2, 2*i:2*i+2] = lines[k].split()[0:2]
+    
+    # If asked, save the data1D variable in a text file
+    if pdf1d_results:
+        if os.path.isfile(pdf1d_results):
+            print('\t\tWARNING: File %s already exists \n \t\tI do not erase it\n' %(pdf1d_results))
+        else:
+            np.savetxt(pdf1d_results, data1D)
+            print('\tFile %s written\n' %(pdf1d_results))
+
+    # intitiate variable
+    data2D = np.zeros((Nbins2D, Nbins2D*len(dataplot)))
+    for i in range (0, len(dataplot)):
+        # Find index of the beginning of the last iteration for the couple of parameters in dataplot
+        try:
+            # We kept this line becasue it permits to raise an error we do not find the couple do plot.
+            # Normaly, this is already done before the call to thsi function...
+            #indexparam = [item.replace(u' ', u'') for item in lines].index('2DMarginalforparameters:' + str(dataplot[i][0]) + str(dataplot[i][1]) + '\n')
             zzz = 0
             indexparam = 0
+            # Find index of the beginning of the last iteration for the couple of parameters
             for zzz, z_str in enumerate([item.replace(u' ', u'') for item in lines]):
-                if z_str == 'Marginalforparameter:' + str(i+1) +'\n':
+                if z_str == '2DMarginalforparameters:' + str(dataplot[i][0]) + str(dataplot[i][1]) + '\n':
                     indexparam = zzz
-            #indexparam = [item.replace(u' ', u'') for item in lines].index('Marginalforparameter:' + str(i+1) +'\n')
-        
-            # Copy the lines until the marginal i+1 in the variable ?
-            for k in range (indexparam + 2, indexparam + 2 + Nbins1D):
-                data1D[k - indexparam -2, 2*i:2*i+2] = lines[k].split()[0:2]
+        except ValueError:
+            raise ValueError('2D pdf couple asked do not agree with 2D pdf computed (%s, %s) ' %(str(dataplot[i][0]), str(dataplot[i][1])))
+        # Copy the lines until the marginal i+1 in the variable ?
+        for k in range (indexparam + 4, indexparam + 4 + Nbins2D):
+            data2D[k - indexparam - 4, (Nbins2D * i):(Nbins2D * i + Nbins2D)] = lines[k].split()
     
-        np.savetxt(pdf1d_results, data1D)
-        print('\tFile %s written\n' %(pdf1d_results))
-
-    if os.path.isfile(pdf2d_results):
-        print('\t\tWARNING: File %s already exists \n \t\tI do not erase it\n' %(pdf2d_results))
-    else:
-        # intitiate variable
-        #data2D = np.zeros((Nbins2D, 4*Nparam2D))
-        data2D = np.zeros((Nbins2D, Nbins2D*len(dataplot)))
-        for i in range (0, len(dataplot)):
-            # Find indexes in lines of the
-            try:
-                #indexparam = lines.index('  2D Marginal for parameters :           ' + str(dataplot[i][0]) + '           ' + str(dataplot[i][1]) + '\n')
-                indexparam = [item.replace(u' ', u'') for item in lines].index('2DMarginalforparameters:' + str(dataplot[i][0]) + str(dataplot[i][1]) + '\n')
-                zzz = 0
-                indexparam = 0
-                for zzz, z_str in enumerate([item.replace(u' ', u'') for item in lines]):
-                    if z_str == '2DMarginalforparameters:' + str(dataplot[i][0]) + str(dataplot[i][1]) + '\n':
-                        indexparam = zzz
-            except ValueError:
-                raise ValueError('2D pdf couple asked do not agree with 2D pdf computed (%s, %s) ' %(str(dataplot[i][0]), str(dataplot[i][1])))
-            # Copy the lines until the marginal i+1 in the variable ?
-            for k in range (indexparam + 4, indexparam + 4 + Nbins2D):
-                data2D[k - indexparam - 4, (Nbins2D * i):(Nbins2D * i + Nbins2D)] = lines[k].split()
-
-        np.savetxt(pdf2d_results, data2D)
-        print('\tFile %s written \n' %(pdf2d_results))
+    # If asked, save the data2D variable in a text file
+    if pdf2d_results:
+        if os.path.isfile(pdf2d_results):
+            print('\t\tWARNING: File %s already exists \n \t\tI do not erase it\n' %(pdf2d_results))
+        else:
+            np.savetxt(pdf2d_results, data2D)
+            print('\tFile %s written \n' %(pdf2d_results))
 
     # Close the nab.out file
     f1r.close()
 
-    # find parameter ranges (Uncomment the block if needed)
+    # Find parameter ranges (Uncomment the block if needed)
     #param_ranges = np.zeros((Nparam, 3))
     #indexparam = lines.index('  Parameter ranges\n')
     #for i in range (0, Nparam):
     #    param_ranges[i, 0:3] = lines[indexparam+2+i].split()[0:3]
     #
-    #return param_ranges
+    #return data1D, data2D, param_ranges
 
-    return
+    return data1D, data2D
 
 ##########################################################################################
 def multiplot(param, nb_var, plot,
               tick_space, 
-              pdf1d_results, pdf2d_results,
+              data1D = None, data2D = None,
               size_x = 15, size_y = 15, size_m = 15, size_plo = 50, size_mis = 50, 
-              size_2d = 100, PDF_1D = 'yes', PDF_2D = 'yes',
+              PDF_1D = True, PDF_2D = True,
               i_param = None):
-    """[summary]
+    """
+    Function to plot the scatter plots with the 1D and 2D pdfs if asked.
 
-    Args:
-        param ([type]): [description]
-        nb_var ([type]): [description]
-        plot ([type]): [description]
-        tick_space ([type]): [description]
-        pdf1d_results ([type]): [description]
-        pdf2d_results ([type]): [description]
-        size_x (int, optional): [description]. Defaults to 15.
-        size_y (int, optional): [description]. Defaults to 15.
-        size_m (int, optional): [description]. Defaults to 15.
-        size_plo (int, optional): [description]. Defaults to 50.
-        size_mis (int, optional): [description]. Defaults to 50.
-        size_2d (int, optional): [description]. Defaults to 100.
-        PDF_1D (str, optional): [description]. Defaults to 'yes'.
-        PDF_2D (str, optional): [description]. Defaults to 'yes'.
-        i_param ([type], optional): [description]. Defaults to None.
+    INPUTS:
+        param       : name of the parameters
+        nb_var      : NA_Results data
+        plot        : parameter to plot
+        tick_space  : Space between the ticks
+        data1D      : 1D marginal. Defaults to None.
+        data2D      : 2D marginal. Defaults to None.
+        size_x      : Font size for x-axis. Defaults to 15.
+        size_y      : Font size for y-axis. Defaults to 15.
+        size_m      : Font size for ???. Defaults to 15.
+        size_plo    : Size of the plot. Defaults to 50.
+        size_mis    : Size of the plot. Defaults to 50.
+        PDF_1D      : Boolean to tell if we plot 1D-pdf (True) or not (False).
+                      Defaults to True. Optional.
+        PDF_2D      : Boolean to tell if we plot 2D-pdf (True) or not (False). 
+                      Defaults to True. Optional.
+        i_param     : Index of couple of parameters to plot. 
+                      Defaults to None. Optional.
 
-    Raises:
-        ValueError: [description]
+    OUTPUTS:
+        Just pdf graphs !
     """
 
     # Define dictionnary to manage tick format
+    # You may add you own settings if needed
     tick_order = {1000  : u'%4.0f',
                   100   : u'%4.0f',
                   10    : u'%4.0f',
@@ -248,28 +263,22 @@ def multiplot(param, nb_var, plot,
                   0.001 : u'%4.3f'}
 
     # New names for the variables to make the code easy to read
-    misfit = nb_var[0]
-    value_x = nb_var[plot[0]]
-    value_y = nb_var[plot[1]]
-    
-    # Set up x_ and y_tick_space
-    x_tick_space = tick_space[plot[0]-1]
-    y_tick_space = tick_space[plot[1]-1]
+    #misfit = nb_var[0] #value_x = nb_var[plot[0]] #value_y = nb_var[plot[1]]
 
     # Plot the results as a scatter plot
     fig, ax = plt.subplots(figsize = (7, 6))
 
     # set the misfit value as a variable for the color
-    scatter_mis = ax.scatter(value_x, 
-                             value_y, 
+    scatter_mis = ax.scatter(nb_var[plot[0]], 
+                             nb_var[plot[1]], 
                              s = size_mis,            
                              linewidth = 0.1,   
                              edgecolor = 'k',   
-                             c = np.log10(misfit),  # data use for the color bar, here as a log10
+                             c = np.log10(nb_var[0]),  # data use for the color bar, here as a log10
                              cmap = 'Spectral')
                            
     # Find the lowest misfit run and return the line/run number
-    if np.isnan(min(misfit)):
+    if np.isnan(min(nb_var[0])):
         raise ValueError('ERROR: one of the misifit is NaN; \n\tthis is probably because you had an issue with the multithread inversion process...\n\tRe-run the inversion with 1 core only.')
         # This error is known with clusters using OAR protocols.
         # It seems that there are errors when nodes discuss with themselves, 
@@ -277,12 +286,12 @@ def multiplot(param, nb_var, plot,
         # does not trully correspond to the parameters values associated in those files.
         # BE CAREFULL !
     else:
-        bfit = np.where(misfit == min(misfit))[0][0]
+        bfit = np.where(nb_var[0] == min(nb_var[0]))[0][0]
         print("Best model is number " + str(bfit + 1))
                 
     # Plot the best (lowest misfit) run as a yellow star
-    plt.plot(value_x[bfit],
-             value_y[bfit],
+    plt.plot(nb_var[plot[0]][bfit],
+             nb_var[plot[1]][bfit],
              '*',
              markeredgewidth = 1,
              markeredgecolor = 'k',
@@ -302,22 +311,23 @@ def multiplot(param, nb_var, plot,
     ################
 
     # Set the starting value of the axesnumber of ticks on the axes 
-    plt.xticks(np.arange(value_x.min(),
-                         value_x.max()),
+    plt.xticks(np.arange(nb_var[plot[0]].min(),
+                         nb_var[plot[0]].max()),
                          fontsize = 10)
         
-    plt.yticks(np.arange(value_y.min(),
-                         value_y.max()),
+    plt.yticks(np.arange(nb_var[plot[1]].min(),
+                         nb_var[plot[1]].max()),
                          fontsize = 10)
     
     # find the number of digits to print for the ticks
     for x_order in (1000, 100, 10, 1, 0.1, 0.01, 0.001):
-        if int(x_tick_space/x_order) in range (1,10):
+        
+        if int(tick_space[plot[0]-1]/x_order) in range (1,10):
             ax.xaxis.set_major_formatter(FormatStrFormatter(tick_order[x_order]))
-        if int(y_tick_space/x_order) in range (1,10):
+        if int(tick_space[plot[1]-1]/x_order) in range (1,10):
             ax.yaxis.set_major_formatter(FormatStrFormatter(tick_order[x_order]))
-    ax.xaxis.set_major_locator(mpltick.MultipleLocator(x_tick_space))
-    ax.yaxis.set_major_locator(mpltick.MultipleLocator(y_tick_space))
+    ax.xaxis.set_major_locator(mpltick.MultipleLocator(tick_space[plot[0]-1]))
+    ax.yaxis.set_major_locator(mpltick.MultipleLocator(tick_space[plot[1]-1]))
 
     # set the name of the axes
     plt.xlabel(param[plot[0]-1], fontsize=size_x)
@@ -326,24 +336,19 @@ def multiplot(param, nb_var, plot,
     #################
     # PDFs Histogram plot code
     #################
-    
-    # Load the na_bayes data
-    if PDF_2D or PDF_1D: 
-        pdf_data = np.loadtxt(pdf1d_results, unpack = True)
 
-    #Start 1D PDF or/and 2D PDF    
+    # Start 1D PDF or/and 2D PDF    
     if PDF_2D:
-        print('Build 2d graphs')  
+        print('Build 2D pdfs countours')  
 
         # Load the 2D pdf data and assing variables to it
-        val_z2d = np.zeros((size_2d, size_2d)) # empty array to stock the pdf results
-        data_2pdf = np.loadtxt(pdf2d_results, unpack = True)        
-        val_x2d = pdf_data[(plot[0]-1)*2]
-        val_y2d = pdf_data[(plot[1]-1)*2]
+        val_z2d = np.zeros((np.shape(data2D.T)[1], np.shape(data2D.T)[1]))  # empty array to stock the pdf results
+        val_x2d = data1D.T[(plot[0]-1)*2]
+        val_y2d = data1D.T[(plot[1]-1)*2]
         if i_param or i_param == 0:
-            val_z2d[0:100, 0:100] = data_2pdf[(i_param+1) * np.shape(data_2pdf)[1] - np.shape(data_2pdf)[1]:(i_param+2) * np.shape(data_2pdf)[1] - np.shape(data_2pdf)[1], :]
+            val_z2d[0:100, 0:100] = data2D.T[(i_param+1) * np.shape(data2D.T)[1] - np.shape(data2D.T)[1]:(i_param+2) * np.shape(data2D.T)[1] - np.shape(data2D.T)[1], :]
         else:
-            val_z2d = data_2pdf
+            val_z2d = data2D.T
 
         val_xx2d, val_yy2d = np.meshgrid(val_x2d, val_y2d)
 
@@ -355,11 +360,11 @@ def multiplot(param, nb_var, plot,
                              levels = 3, cmap = 'hot')
             plt.clabel(CS, inline = 2, fontsize = 12)
         except UserWarning:
-            print('WARNING: No contour level')
+            print('WARNING: No contour levels plotted')
     
     # Start 1D PDF or/and 2D PDF    
     if PDF_1D:
-        print('build 1d graphs')
+        print('Build 1D pdfs')
         
         # Position the 2 new figures     
         divider = make_axes_locatable(ax)
@@ -372,21 +377,18 @@ def multiplot(param, nb_var, plot,
     
         # Loop to select the right columns for the right parameters
         if plot[0] == 1:
-            axHistx.plot(pdf_data[0], pdf_data[1])
+            axHistx.plot(data1D.T[0], data1D.T[1])
         else:
-            axHistx.plot(pdf_data[plot[0] + (plot[0] - 2)], 
-                         pdf_data[plot[0] + (plot[0] - 1)])
+            axHistx.plot(data1D.T[plot[0] + (plot[0] - 2)], 
+                         data1D.T[plot[0] + (plot[0] - 1)])
         if plot[1] == 1:
-            axHisty.plot(pdf_data[1], pdf_data[0])
+            axHisty.plot(data1D.T[1], data1D.T[0])
         else:
-            
-            axHisty.plot(pdf_data[plot[1] + (plot[1] - 1)], 
-                         pdf_data[plot[1] + (plot[1] - 2)])
+            axHisty.plot(data1D.T[plot[1] + (plot[1] - 1)], 
+                         data1D.T[plot[1] + (plot[1] - 2)])
           
             axHistx.set_ylim(ymin = 0)
             axHisty.set_xlim(xmin = 0)
-    
-    #nab_best=np.loadtxt('NA/nab_best.txt', unpack = True)
     
     # Saving the plots as a pdf file
     if i_param or i_param == 0:
@@ -395,6 +397,7 @@ def multiplot(param, nb_var, plot,
     else: 
         plt.savefig('NA/Graphs/PDF.pdf')
         print('Plotting : ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (NA/Graphs/PDF.pdf)')
+    
     # If you want to plot on screen each plot
     #plt.show()
     
@@ -411,7 +414,11 @@ if __name__ == u'__main__':
 
     # Check that NA_results exists
     if not os.path.isfile(inv_results):
-        raise NameError('ERROR: File {FileNa} does not exist'.format(FileNa=str(inv_results)))
+        raise NameError('ERROR: File %s does not exist' %(str(inv_results)))
+    # Check if the number of parameters is compatible with the number ticks_space
+    if len(param) != len(tick_space):
+        raise ValueError('ERROR: the number of parameters is different than the number of ticks_space asked !\n Check it !')
+    
     # Loading the data, calling as many variables as given in param + 1 for the misfit
     if inv_results[-3:] == 'txt':
         #nb_var = np.zeros(len(param) + 1)
@@ -429,13 +436,13 @@ if __name__ == u'__main__':
 
     # Check that nab.out exists
     if not os.path.isfile(data_nab): 
-        print ('WARNING: File {FileNa} does not exist\n\n'.format(FileNa=str(data_nab)))
+        print ('WARNING: File %s does not exist\n\n' %(str(data_nab)))
         PDF_1D = False
         PDF_2D = False
 
     # Build Nab files for plotting
     if PDF_1D or PDF_2D:
-        read_NABout(data_nab, pdf1d_results, pdf2d_results, dataplot)
+        data1D, data2D = read_NABout(data_nab, dataplot, pdf1d_results, pdf2d_results)
 
     # plot data
     if not os.path.exists('NA/Graphs'): os.mkdir('NA/Graphs')
@@ -443,12 +450,17 @@ if __name__ == u'__main__':
         for i in range(len(dataplot)):
             print()
             multiplot(param, nb_var, dataplot[i], 
-                      tick_space, pdf1d_results, pdf2d_results, 
+                      tick_space, 
+                      #pdf1d_results, pdf2d_results, 
+                      data1D, data2D,
                       size_x, size_y, size_m, size_plo, size_mis, 
-                      size_2d, PDF_1D, PDF_2D, i)
+                      PDF_1D, PDF_2D, i)
     else:
         print()
         multiplot(param, nb_var, dataplot[0],
-                  tick_space, pdf1d_results, pdf2d_results, 
-                   size_x, size_y, size_m, size_plo, size_mis, 
-                   size_2d, PDF_1D, PDF_2D)
+                  tick_space, 
+                  #pdf1d_results, pdf2d_results, 
+                  data1D, data2D,
+                  size_x, size_y, size_m, size_plo, size_mis, 
+                  PDF_1D, PDF_2D)
+
