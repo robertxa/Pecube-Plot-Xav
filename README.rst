@@ -13,16 +13,23 @@ USAGE
 -----
 	
 Each script shoulb be ran in a terminal with the command : 
-python Plot-Pecube-Forward.py
-or
-python Inversion_plots-XR.py
 
-See the headers in each files to know how to parametrize them. 
+.. code-block:: bash
+
+	python Plot-Pecube-Forward.py
+
+or:
+
+.. code-block:: bash
+
+    python Inversion_plots-XR.py
+
+Please, edit the python files in your text-editor to see the headers in each files to know how to parametrize them. 
 
 LICENCE
 -------
 
 Copyright (c) 2021 Xavier Robert <xavier.robert@ird.fr>
 
-This package is licenced with `SPDX-License-Identifier: GPL-3.0-or-later<SPDX-License-Identifier: GPL-3.0-or-later>
+This package is licenced with <SPDX-License-Identifier: GPL-3.0-or-later>`
 
