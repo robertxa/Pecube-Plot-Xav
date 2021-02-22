@@ -75,7 +75,7 @@ dataplot = [(1,2), (3,4), (5,6), (7,8)]
 # Usually is NA_Results and nab.out
 #inv_results = 'NA/NA_results.txt'
 inv_results = 'NA/NA_results.csv'
-data_nab = 'NA/NAB/nab.out'
+data_nab    = 'NA/NAB/nab.out'
 
 # Choose if you want the PDFs (Probability Density Function) 
 # plots 1D or 2D contour with the misfit plots (True of False)
@@ -126,11 +126,10 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
     
     """
 
-    # Open the nab.out file
-    f1r = open(data_nab, 'r')
+    # Open the nab.out file and store the content in lines
+    with open(data_nab, 'r') as f1r:
+        lines = f1r.readlines()
 
-    # Read line to line
-    lines = f1r.readlines()
     test_couple = []
     for line in lines:
         # Get number of parameters
@@ -183,7 +182,7 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
     for i in range (0, len(dataplot)):
         # Find index of the beginning of the last iteration for the couple of parameters in dataplot
         try:
-            # We kept this line becasue it permits to raise an error we do not find the couple do plot.
+            # We kept this line because it permits to raise an error we do not find the couple do plot.
             # Normaly, this is already done before the call to thsi function...
             #indexparam = [item.replace(u' ', u'') for item in lines].index('2DMarginalforparameters:' + str(dataplot[i][0]) + str(dataplot[i][1]) + '\n')
             zzz = 0
@@ -206,9 +205,6 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
             np.savetxt(pdf2d_results, data2D)
             print('\tFile %s written \n' %(pdf2d_results))
 
-    # Close the nab.out file
-    f1r.close()
-
     # Find parameter ranges (Uncomment the block if needed)
     #param_ranges = np.zeros((Nparam, 3))
     #indexparam = lines.index('  Parameter ranges\n')
@@ -218,6 +214,8 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
     #return data1D, data2D, param_ranges
 
     return data1D, data2D
+
+
 
 ##########################################################################################
 def multiplot(param, nb_var, plot,
@@ -421,7 +419,6 @@ if __name__ == u'__main__':
     
     # Loading the data, calling as many variables as given in param + 1 for the misfit
     if inv_results[-3:] == 'txt':
-        #nb_var = np.zeros(len(param) + 1)
         nb_var = np.loadtxt(inv_results, unpack = True)
     elif inv_results[-3:] == 'csv':
         nb_var = np.genfromtxt(inv_results, delimiter = ',', skip_header = 1, unpack = True)
