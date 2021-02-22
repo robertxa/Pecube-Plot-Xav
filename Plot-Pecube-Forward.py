@@ -26,6 +26,7 @@ xavier.robert@ujf-grenoble.fr
 """
 
 ###### To DO :  #######
+#	 - Adapt the script for Pecube version 4.x (not same input file !)
 #    - Test the MTL pdfs (I have not tested it, even if it should be OK)
 #    - Add error bars on data graphs ? 
 #      For that we should read the input data file given in topo_parameters.txt 
@@ -141,6 +142,21 @@ colores = {'AHe' : 'y',
 def plottot(datac, i, xlabel, ylabel, err = None):
 	"""
 	Function to plot the data
+
+	INPUT:
+		datac  :
+		i      :
+		xlabel :
+		ylabel :
+		err    : ; default = None
+	OUTPUTS:
+		No outputs
+
+	USAGE:
+		plottot(datac, i, xlabel, ylabel, err)
+		or
+		plottot(datac, i, xlabel, ylabel)
+
 	"""
 	if err == None:
 		plt.plot(datac[:, i-1], datac[:, i], 'o', color = 'r')
@@ -208,11 +224,27 @@ def plottot(datac, i, xlabel, ylabel, err = None):
 	return
 	# End of the function
 
+
 ############################################################################
 
 def plotmtl(datac, iii, system, agecol, pgraph, pfolder):
 	"""
 	Function to plot the MTL data
+
+	INPUT:
+		datac   : 
+		iii     : 
+		system  : 
+		agecol  : 
+		pgraph  : 
+		pfolder : 
+
+	OUTPUTS:
+		No outputs
+
+	USAGE:
+		plotmtl(datac, iii, system, agecol, pgraph, pfolder)
+		
 	"""
 	
 	# open a new figure
@@ -251,11 +283,14 @@ def find_nbplot(nbplot):
 	      
 	INPUT:
 	   nbplot = total number of plots   
+
 	OUTPUT:
 	    nbplotx = nb of lines in the subplot
 	    nbploty = nb of columns in the subplots
+
 	USAGE:
 	  nbplotx, nbploty = find_nbplot(nbplot)
+
 	"""
 	
 	if nbplot == 1:
@@ -289,8 +324,10 @@ def find_nbplot(nbplot):
 			         
 	return nbplotx, nbploty
 
+
 ######## END of the functions definition ###########
 ############################################################################
+
 
 ############################################################################
 ######### Main code ###############
@@ -302,15 +339,14 @@ if __name__ == "__main__":
 	print('Plotting data for a Pecube forward model...')
 	print('___________________________________________')
 	
-	# Read in which folder we are wrking from topo_parameters.txt
-	f0r = open('input/topo_parameters.txt', "r")
-	inputd = []
-	for line in f0r:
-		if line[0] != '$' and line[0] != '#' and line[0] != ' ' \
-		   and len(line) != 1 and len(line) != 0 :
-			inputd.append(line.strip())
-	# close the file
-	f0r.close()
+	# Read in which folder we are working from topo_parameters.txt
+	with open('input/topo_parameters.txt', "r") as f0r:
+		inputd = []
+		for line in f0r:
+			if line[0] != '$' and line[0] != '#' and line[0] != ' ' \
+		   	and len(line) != 1 and len(line) != 0 :
+				inputd.append(line.strip())
+	
 	# get the working folder (first input in topo_parameters.txt)
 	pfolder = inputd[0]
 	# get the ages data file (3rd input from the end of the file topo_parameters.txt ; 

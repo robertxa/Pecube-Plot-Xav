@@ -16,13 +16,13 @@ Each script shoulb be ran in a terminal with the command :
 
 .. code-block:: bash
 
-	python Plot-Pecube-Forward.py
+	~$ python Plot-Pecube-Forward.py
 
 or:
 
 .. code-block:: bash
 
-    python Inversion_plots-XR.py
+    ~$ python Inversion_plots-XR.py
 
 Please, edit the python files in your text-editor to see the headers in each files to know how to parametrize them. 
 
