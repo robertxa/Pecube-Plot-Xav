@@ -56,10 +56,10 @@ warnings.simplefilter("error", UserWarning)
 
 param = ['Ignimbrite filling time (Ma)', 
          'Initiation for ignimbrite carving (Ma)',
-         'Last fault-point distance (km)',
-         'First fault segment depth (km)',
-         'Global block e-rate (km/Ma)',
-         'Global block e-rate (km/Ma)',
+         'x1 fault (20 km depth) (km)',
+         'x2 fault (4 km high) (km)',
+         'Block exhumation 39-14 (km/Ma)',
+         'Block exhumation 14-0 (km/Ma)',
          'Initiation for faulting (Ma)',
          'Fault velocity (km/Ma)']
 
@@ -80,14 +80,14 @@ data_nab    = 'NA/NAB/nab.out'
 # Choose if you want the PDFs (Probability Density Function) 
 # plots 1D or 2D contour with the misfit plots (True of False)
 PDF_1D = True
-PDF_2D = True
+PDF_2D = False
 
 # Set the space between ticks for x and y axes for each parameters
 # (same order than the list param)
 #   If the tick format does not fit your variables, 
 #   you may need to modify the dictionnary tick_order
 #   in the function multiplot
-tick_space =[2, 2, 25, 5, 0.02, 0.1, 5, 0.5]
+tick_space =[2, 2, 25, 5, 0.05, 0.1, 5, 0.5]
 
 # Set the size of the font for the x and y axes label
 size_x = 15
@@ -260,9 +260,6 @@ def multiplot(param, nb_var, plot,
                   0.01  : u'%4.2f',
                   0.001 : u'%4.3f'}
 
-    # New names for the variables to make the code easy to read
-    #misfit = nb_var[0] #value_x = nb_var[plot[0]] #value_y = nb_var[plot[1]]
-
     # Plot the results as a scatter plot
     fig, ax = plt.subplots(figsize = (7, 6))
 
@@ -319,7 +316,6 @@ def multiplot(param, nb_var, plot,
     
     # find the number of digits to print for the ticks
     for x_order in (1000, 100, 10, 1, 0.1, 0.01, 0.001):
-        
         if int(tick_space[plot[0]-1]/x_order) in range (1,10):
             ax.xaxis.set_major_formatter(FormatStrFormatter(tick_order[x_order]))
         if int(tick_space[plot[1]-1]/x_order) in range (1,10):
@@ -331,9 +327,9 @@ def multiplot(param, nb_var, plot,
     plt.xlabel(param[plot[0]-1], fontsize=size_x)
     plt.ylabel(param[plot[1]-1], fontsize=size_y)
     
-    #################
-    # PDFs Histogram plot code
-    #################
+    ############################
+    # PDFs Histogram plot code #
+    ############################
 
     # Start 1D PDF or/and 2D PDF    
     if PDF_2D:
@@ -391,10 +387,10 @@ def multiplot(param, nb_var, plot,
     # Saving the plots as a pdf file
     if i_param or i_param == 0:
         plt.savefig('NA/Graphs/PDF_' + str(i_param+1) + '.pdf')
-        print('Plotting : ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (NA/Graphs/PDF_' + str(i_param+1) + '.pdf)')
+        print('Plotting : ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (NA/Graphs/PDF_' + str(i_param+1) + '.pdf)\n')
     else: 
         plt.savefig('NA/Graphs/PDF.pdf')
-        print('Plotting : ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (NA/Graphs/PDF.pdf)')
+        print('Plotting : ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (NA/Graphs/PDF.pdf)\n')
     
     # If you want to plot on screen each plot
     #plt.show()
@@ -410,6 +406,9 @@ if __name__ == u'__main__':
     main code
     """
 
+    print('###########################################################################\n')
+    print('\t\tPlot results from NA inversions\n')
+    print('###########################################################################\n')
     # Check that NA_results exists
     if not os.path.isfile(inv_results):
         raise NameError('ERROR: File %s does not exist' %(str(inv_results)))
@@ -431,33 +430,42 @@ if __name__ == u'__main__':
         print("\nInfinity: ", np.inf in nb_var)
         raise ValueError('NA_results.csv contains NaN or infinite numbers...\n\n')
 
+    # Sort nb_var in function of misfit to get the best misfits over the lower ones 
+    #          --> Better scatter plot visualisation
+    nb_var = nb_var.T[nb_var.T[:,0].argsort()[::-1]].T
+    #nb_var.T[:] = nb_var.T[::-1]
+
     # Check that nab.out exists
     if not os.path.isfile(data_nab): 
         print ('WARNING: File %s does not exist\n\n' %(str(data_nab)))
         PDF_1D = False
         PDF_2D = False
+        
+    if not PDF_1D: pdf1d_results = None
+    if not PDF_2D: pdf2d_results = None
 
     # Build Nab files for plotting
     if PDF_1D or PDF_2D:
         data1D, data2D = read_NABout(data_nab, dataplot, pdf1d_results, pdf2d_results)
 
-    # plot data
+    # Plot data
+    # Check if there is a folder to store the outputs
     if not os.path.exists('NA/Graphs'): os.mkdir('NA/Graphs')
     if len(dataplot) > 1:
         for i in range(len(dataplot)):
-            print()
+            # Call the plot function for each parameter value to plot
             multiplot(param, nb_var, dataplot[i], 
                       tick_space, 
-                      #pdf1d_results, pdf2d_results, 
                       data1D, data2D,
                       size_x, size_y, size_m, size_plo, size_mis, 
                       PDF_1D, PDF_2D, i)
     else:
-        print()
         multiplot(param, nb_var, dataplot[0],
                   tick_space, 
-                  #pdf1d_results, pdf2d_results, 
                   data1D, data2D,
                   size_x, size_y, size_m, size_plo, size_mis, 
                   PDF_1D, PDF_2D)
 
+    print('###########################################################################\n')
+    print('\t\tEnd...\n')
+    print('###########################################################################\n')
