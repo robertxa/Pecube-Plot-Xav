@@ -282,7 +282,7 @@ def multiplot(param, nb_var, plot,
         # BE CAREFULL !
     else:
         bfit = np.where(nb_var[0] == min(nb_var[0]))[0][0]
-        print("Best model is number " + str(bfit + 1))
+        print("Best model is number %s with misfit of %s" %(str(bfit + 1), str(min(nb_var[0]))))
                 
     # Plot the best (lowest misfit) run as a yellow star
     plt.plot(nb_var[plot[0]][bfit],
@@ -299,7 +299,11 @@ def multiplot(param, nb_var, plot,
                        rotation = 270,
                        size = size_m,
                        labelpad = 20)
-    cbar.ax.yaxis.set_major_formatter(FormatStrFormatter('%4.1f'))
+    # Find the right misfit digits to print
+    for x_order in (1000, 100, 10, 1, 0.1, 0.01, 0.001):
+        if int((np.log(max(nb_var[0]))-np.log(min(nb_var[0])))/x_order) in range (1,10):
+            cbar.ax.yaxis.set_major_formatter(FormatStrFormatter(tick_order[x_order/10]))
+    #cbar.ax.yaxis.set_major_formatter(FormatStrFormatter('%4.1f'))
     
     ################
     # Axes settings
