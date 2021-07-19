@@ -24,6 +24,10 @@ xavier.robert@ujf-grenoble.fr
 (c) licence CCby-nc : http://creativecommons.org/licenses/by-nc/3.0/ 2015
 
 """
+###### History :  #######
+#    - ??? : First release for Pecube V2 and V3
+#    - 2021//: Update for Pecube V4
+###### End History #######
 
 ###### To DO :  #######
 #	 - Adapt the script for Pecube version 4.x (not same input file !)
@@ -31,6 +35,8 @@ xavier.robert@ujf-grenoble.fr
 #    - Add error bars on data graphs ? 
 #      For that we should read the input data file given in topo_parameters.txt 
 #                    (paragraphe N°12 of topo_parameters.txt)
+#    - Add the plot of a projected profile between point A and point B ?
+#   - 
 #      
 ###### End To DO #######
 
@@ -48,15 +54,25 @@ import shutil
 
 
 #######################################
+# Define Pecube settings
+# VPecube : Version of Pecube used; Can be 2, 3 or 4
+#VPecube = 2
+#VPecube = 3
+VPecube = 4
+# pfolder is the folder of the Pecube Run to plot
+pfolder = RUN00
+
+
+
+
 # Define data to analysis
 # dataplot: List of data to plot ; By default, the altitude will be plotted
 #           Do not forget the simple quotes !!!
 #           ['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL']
 dataplot = ['AFT', 'ZFT']
 
-# data: Name of the file Comparison.txt produced by Pecube
-#       Usually you do not have to change it
-data = 'Comparison.txt'
+
+
 
 # graphpath: name of the folder where the plot will be written
 #            Usually you do not have to change it
@@ -64,8 +80,9 @@ graphpath = 'Graphs'
 
 # profiletype: type of profile = ['Latitude', 'Longitude', 'Altitude']
 #              if [], no age profile is plotted
-#profiletype = ['Latitude', 'Longitude', 'Altitude']
-profiletype = ['Latitude', 'Altitude']
+#              For the moment, NO there is no projected profile; This is one thing to add ?
+profiletype = ['Latitude', 'Longitude', 'Altitude']
+#profiletype = ['Latitude', 'Altitude']
 
 # end define the data and parameters
 #######################################
@@ -136,6 +153,46 @@ colores = {'AHe' : 'y',
            'HbAr' : '0.75',
            'FTL' : 'y'
            }
+
+# Tags: Tags used in Pecube v4+ input files
+#tagsName = ('SAMPLE', 'LON', 'LAT', 'HEIGHT', 
+tagsName = ('AHE', 'DAHE', 
+		    'AFT', 'DAFT',
+		    'ZHE', 'DZHE',
+		    'ZFT', 'DZFT',
+		    'KAR', 'DKAR',
+		    'BAR', 'DBAR',
+		    'MAR', 'DMAR',
+		    'HAR', 'DHAR')
+
+# tags: Tags used in Pecube v4+ input files
+#tags = ('SAMPLE', 'LON', 'LAT', 'HEIGHT', 
+tags = {'HEIGHT' : 'alt', 
+        'AHE'    : 'AHe',
+		'DAHE'   : 'AHe', 
+	    'AFT'    : 'AFT',
+		'DAFT'   : 'AFT',
+		'ZHE'    : 'ZHe',
+		'DZHE'   : 'ZHe',
+	    'ZFT'    : 'ZFT',
+		'DZFT'   : 'ZFT',
+	    'KAR'    : 'KAr',
+		'DKAR'   : 'KAr',
+		'BAR'    : 'BAr',
+		'DBAR'   : 'BAr',
+	    'MAR'    : 'MAr',
+		'DMAR'   : 'MAr',
+	    'HAR'    : 'HAr', 
+		'DHAR'   : 'HAr'
+		}
+
+
+tagsMTL = ('SIZE','FTL')
+
+tagsQT = ('TIMEH', 'TEMPH', 'DTEMPH',
+		  'AGE43', 'DAGE43', 'DUR43', 'TEMP43', '%REL', 'D%REL', 'AREL', 'DAREL')
+
+tagsTL = ('DOSER', 'D0', 'ATL', 'BTL', 'ET', 'LOGS', 'LOGRHO', 'N/N')
 
 ############################################################################
 ######## Beginning of functions definition ###########
@@ -334,53 +391,97 @@ def find_nbplot(nbplot):
 if __name__ == "__main__":
 	#### Read the data
 	#print(' ')
-	print('___________________________________________')
-	print(' ')
+	print('___________________________________________\n')
 	print('Plotting data for a Pecube forward model...')
-	print('___________________________________________')
+	print('___________________________________________\n')
 	
-	# Read in which folder we are working from topo_parameters.txt
-	with open('input/topo_parameters.txt', "r") as f0r:
-		inputd = []
-		for line in f0r:
-			if line[0] != '$' and line[0] != '#' and line[0] != ' ' \
-		   	and len(line) != 1 and len(line) != 0 :
-				inputd.append(line.strip())
+	if VPecube == 1:
+		raise ValueError('ERROR: Pecube v1 not implemented, please upgrade the code\n')
+	elif VPecube in [2,3]:
+		print('WARNING: You are using Pecube v2 or V3, be carefull, this is an old version, please upgrade the code\n')
+		# data: path and Name of the file Comparison.txt produced by Pecube
+		#       Usually you do not have to change it
+		data = 'Comparison.txt'
+
+		# Read in which folder we are working from topo_parameters.txt
+		with open('input/topo_parameters.txt', "r") as f0r:
+			inputd = []
+			for line in f0r:
+				if line[0] != '$' and line[0] != '#' and line[0] != ' ' \
+		   		and len(line) != 1 and len(line) != 0 :
+					inputd.append(line.strip())
 	
-	# get the working folder (first input in topo_parameters.txt)
-	pfolder = inputd[0]
-	# get the ages data file (3rd input from the end of the file topo_parameters.txt ; 
-	#     -3 should be changed if the end of topo_parameters.txt is changed)
-	datain = inputd[-3]
+		# get the working folder (first input in topo_parameters.txt)
+		pfolder = inputd[0]
+		# get the ages data file (3rd input from the end of the file topo_parameters.txt ; 
+		#     -3 should be changed if the end of topo_parameters.txt is changed)
+		datain = inputd[-3]
+		pgraph = str(pfolder) + '/' + graphpath
+		pdata = pfolder + '/' + data
+	elif VPecube == 4:
+		print('You are using Pecube v4...\n')
+		# data: path and Name of the comparison file produced by Pecube version 4+
+		#       Usually you do not have to change it
+		data   = 'output/CompareAge.csv'
+		dataTT = 'output/CompareTT.csv'
+		pdata = data
+
+		with open('input/Pecube.in', "r") as f0r:
+			lines = f0r.readlines()
+			for line in lines:
+				if "data_folder" in line:
+					datain = 'data/' + line.split()[-1] + '/A_files.csv'
+					datainTH = 'data/' + line.split()[-1] + '/TH_files.csv'
+		pgraph = 'output/' + graphpath	
+
+	print('\tWorking in the folder: ' + str(pfolder))
 	
-	print('   Working in the folder: ' + str(pfolder))
-	pgraph = str(pfolder) + '/' + graphpath
 	# Check if the Graphs/ folder exists, if not create it
 	if os.path.exists(pgraph) == False:
 		print('Output folder does not exist...')
-		print('I am creating it...')
-		print(' ')
+		print('I am creating it...\n')
 		os.mkdir(pgraph)
 	else:
-		print('   Folder ' + pgraph +'/ already exists, I will write in it and erase previous pdf file')
-	# Read file Comparison.txt
-	pdata = pfolder + '/' + data
+		print('\tFolder %s/ already exists, I will write in it and erase previous pdf file\n' %(str(pgraph)))
+	
+	# Read file Comparison.txt or CompareAGE.csv
 	# Check if file Comparison.txt exists, if not, raise an error
 	if os.path.isfile(pdata) == False and os.access(pdata, os.R_OK) == False :
-		#print('ERROR : File {FileNa} does not exist'.format(FileNa=str(pdata))) 
-		sys.exit('ERROR : File {FileNa} does not exist'.format(FileNa=str(pdata)))
-	print('    Reading data...')
-	datac = np.loadtxt(pdata, skiprows = 1)
+		raise FileExistsError('ERROR : File %s does not exist' %(str(pdata)))
+	print('\tReading data...')
+	if VPecube in [2,3]:
+		datac = np.loadtxt(pdata, skiprows = 1)
+	elif VPecube == 4: 
+		#datac = np.genfromtxt(pdata, delimiter = ',', skip_header = 1)
+		datac = np.genfromtxt(pdata, delimiter = ',', names = True)
+		# Build a dictionnary to find the number of columns
+
+
+
+		# PB : Names in header in CompareAGE.csv are not the same than in A_Files.csv (inputs)
+		for item in tagsName:
+			if item[0] == 'D':
+				errcol[tags[item]] = datac.index[item]
+			else:
+				agecol[tags[item]] = datac.index[item]
+
 	if datain != 'Nil':
 		if os.path.isfile('Data/'+ datain) == False and os.access('Data/'+ datain, os.R_OK) == False :
-			sys.exit('ERROR : File {FileNa} does not exist'.format(FileNa=str('Data/'+ datain)))
-		dataerr = np.loadtxt('Data/'+ datain, skiprows = 1)
-		dataerr[dataerr[:,:] < 0.] = 'NaN'
+			raise FileExistsError('ERROR : File Data/%s does not exist' %(str(datain)))
+		if VPecube in [2,3]:
+			dataerr = np.loadtxt('Data/'+ datain, skiprows = 1)
+		elif VPecube == 4: 
+			#dataerr = np.genfromtxt(datain, delimiter = ',', skip_header = 1)
+			dataerr = np.genfromtxt(datain, delimiter = ',', names = True)
+		dataerr[dataerr[:,:] < 0.] = np.nan
 	else:
-		dataerr[0:datac.shape[0], 0:datac.shape[1]]	= 'NaN'
+		dataerr[0:datac.shape[0], 0:datac.shape[1]]	= np.nan
 	
+
+
+
 	if datain != 'Nil':
-		print('    Plotting data')
+		print('\tPlotting data')
 		# Determine the number of plot
 		nbplot = int(len(dataplot)) + 1
 		nbplotx, nbploty = find_nbplot(nbplot)
@@ -395,10 +496,16 @@ if __name__ == "__main__":
 		
 		for system in dataplot:
 			if system != 'FTL':
-				print('    Plotting ' + system + ' system')
-				plt.subplot(nbploty, nbplotx, dataplot.index(system) + 2, aspect='equal')
-				# use the dictionary defined at th beginning of the code
-				plottot(datac, agecol[system], agename[system], predname[system], err = dataerr[:, errcol[system] - 1])												
+				print('\t\tPlotting ' + system + ' system')
+				plt.subplot(nbploty, nbplotx, 
+				            dataplot.index(system) + 2, 
+							aspect='equal')
+				# use the dictionary defined at the beginning of the code
+				plottot(datac, 
+				        agecol[system], 
+						agename[system], 
+						predname[system], 
+						err = dataerr[:, errcol[system] - 1])												
 		# Add main title
 		plt.suptitle('Run ' + str(pfolder), size=16)
 		plt.savefig(pgraph + '/Plot_forward' + pfolder +'.pdf')
@@ -417,31 +524,37 @@ if __name__ == "__main__":
 					i += 1
 			nbplotx, nbploty = find_nbplot(nbplot)
 	
-			# and only them define the subplots
+			# and only then, define the subplots
 			plt.subplots_adjust(wspace = (nbplot + 2)/10., hspace = (nbplot + 2)/10.)
-			print('    Plotting FTL distributions')
+			print('\tPlotting FTL distributions')
 			for iii in range (0, nbplot-1):
 				plt.subplot(nbploty, nbplotx, iii + 1, aspect='equal')
 				# stepping over data
 				if datac[iii, agecol[system]] >= 0:
-					print('       Doing data number ' + str(iii) + ' on ' + str(nbplot))
+					print('\t\tDoing data number ' + str(iii) + ' on ' + str(nbplot))
 					# if there are FTL datan call plotmtl
 					plotmtl(datac, iii, system, agecol, pgraph, pfolder)
 				else:
-					print('       Data number %i on %i without MTL data' % (iii + 1, nbplot))
+					print('\t\tData number %i on %i without MTL data' % (iii + 1, nbplot))
 			plt.suptitle('MTL distributions')
 			plt.savefig(pgraph + '/MTL_' + pfolder +'.pdf')
 			plt.close(2)
 		print(' ')
 	else:
-		print('No input data, no data/prediction graphs')
+		print('No input data, no data/prediction graphs\n')
 	
-	# Plot data and prediction along simple transects (Altitude, Longitude or Latitude
+
+
+
+
+
+
+	# Plot data and prediction along simple transects (Altitude, Longitude or Latitude)
 	for plotplot in profiletype:
 		# The next few line are used to plot ages along a transect to compare data and model predictions. 
 		# It could be changed, depending on your model settings
 		# plot ages in function of latitude
-		print('    Plotting age transects %s...' % plotplot)
+		print('\tPlotting age transects %s...\n' % plotplot)
 		plt.figure()
 		if plotplot != 'Altitude':
 			for system in dataplot:
@@ -501,13 +614,13 @@ if __name__ == "__main__":
 		             max(datac[:, agecol['BAr']]), 
 		             max(datac[:, agecol['HbAr']]))
 		if plotplot != 'Altitude':
-			# If the range of ages is not goof on the graph, it can be set manually here
+			# If the range of ages is not good on the graph, it can be set manually here
 			# plt.xlim(0, your maxage)
 			plt.ylim(0, maxage)
 			plt.xlabel('%s ($^o$N)' % plotplot)
 			plt.ylabel('Age (Ma)')
 		else:
-			# If the range of ages is not goof on the graph, it can be set manually here
+			# If the range of ages is not good on the graph, it can be set manually here
 			# plt.xlim(0, your maxage)
 			plt.xlim(0, maxage)
 			plt.ylim(0, max(datac[:, plotprof[plotplot]]))
@@ -517,15 +630,14 @@ if __name__ == "__main__":
 		plt.savefig(pgraph + '/Plot_forward_transect' + pfolder + '_' + plotplot +'.pdf')
 		plt.close()
 	
-	print('    Saving files...')
+	print('\tSaving files...\n')
 	# save input files in the working folder
-	print('       --> copying input/topo_parameters.txt to ' + pgraph)
-	shutil.copy2('input/topo_parameters.txt', pgraph)
-	print('       --> copying input/fault_parameters.txt to ' + pgraph)
-	shutil.copy2('input/fault_parameters.txt', pgraph)
+	if VPecube in [2,3]:
+		print('\t\t--> copying input/topo_parameters.txt to ' + pgraph)
+		shutil.copy2('input/topo_parameters.txt', pgraph)
+		print('\t\t--> copying input/fault_parameters.txt to ' + pgraph)
+		shutil.copy2('input/fault_parameters.txt', pgraph)
 	
-	print('__________________________________________')
-	print(' ')	
-	print(' ')
+	print('__________________________________________\n\n')
 	
 #### END ####

@@ -445,8 +445,12 @@ if __name__ == u'__main__':
         PDF_1D = False
         PDF_2D = False
         
-    if not PDF_1D: pdf1d_results = None
-    if not PDF_2D: pdf2d_results = None
+    if not PDF_1D: 
+        pdf1d_results = None
+        data1D = None
+    if not PDF_2D: 
+        pdf2d_results = None
+        data2D = None
 
     # Build Nab files for plotting
     if PDF_1D or PDF_2D:
