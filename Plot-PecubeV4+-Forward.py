@@ -9,12 +9,12 @@ Grenoble, 2021.07.16
 USAGE :
   1- Copy this file in the main Pecube/RUNXX folder
   2- Set (edit) which system you want to plot in the "# Define data to analysis" section (see below)
-  3 - Run in the terminal: $ python Plot-Pecube-Forward.py after the run of ./bin/Pecube
+  3- Run in the terminal: $ python Plot-PecubeV4+-Forward.py after the run of ./bin/Pecube
   4- The plots will be in the folder RUNXX/Graphs/ where RUNXX/ is the working folder
 
 INPUTS:
-The inputs are in the script file, in the "# Define data to analysis" section. 
-The different arguments are described.
+	The inputs are in the script file, in the "# Define data to analysis" section. 
+	The different arguments are described.
 
 xavier.robert@ird.fr
 
@@ -22,20 +22,21 @@ xavier.robert@ird.fr
 
 """
 ###### History :  #######
-#    - ??? : First release for Pecube V2 and V3
-#    - 2021/07/16: Rewrite the script for Pecube V4 outputs
+#   - 2021/07/16: NEW script for Pecube V4 outputs
+#	- 
+#	
 ###### End History #######
 
 ###### To DO :  #######
-#   - Test the MTL pdfs (I have not tested it, even if it should be OK)
-#   - Add the plot of a projected profile between point A and point B ?
-#	- Revise x & ylim
+#   - Write the code to plot the MTL pdfs
+#	- Write the code to plot the time-temperature comparisons
 #	- 
-#      
+#   
 ###### End To DO #######
 
 from __future__ import  division
 # This to be sure that the result of the division of integers is a real, not an integer
+# Normally not needed for Python 3
 
 # Import modules
 import os
@@ -46,7 +47,8 @@ import matplotlib.pyplot as plt
 # Define data to plot
 # dataplot: List of data to plot ; By default, the altitude will be plotted
 #           Do not forget the simple quotes !!!
-#           ['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL']
+#           ['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']
+# 			Rem: For the moment, MTL and TTp not implemented
 dataplot = ['AHe','AFT']
 
 # graphpath: name of the folder where the plot will be written
@@ -55,7 +57,7 @@ graphpath = 'Graphs'
 
 # Data to plot
 #	datafnme:  results of Pecube forward modeling
-#	inputdata: input data declared in Pecube.in
+#	inputdata: input data declared in Pecube.in; This is used to plot the errorbars
 datafnme = 'Data/CompareAGE.csv'
 inputdata = 'Data/Trujillo.csv'
 
@@ -99,8 +101,7 @@ agecol = {'alt' : 'HEIGHT',
           'HbAr' : 'HAR',
           'FTL' : 'FT'
           }
-# errname: respective column number of the error on data in the data input file
-#		   Need to be updated for other 
+# errname: respective column number of the error on data in the data input file 
 errname = {'AHe' : 'DAHE',
 		   'AFT' : 'DAFT',
 		   'ZHe' : 'DZHE',
@@ -183,12 +184,17 @@ def bearing(XA,YA,XB,YB):
 #####################################
 
 def project(A, B, datac):
-	"""[summary]
+	"""
+	Function to project lat/long data along a line defined by the lat/long coordinates
+	   of the two points defining the line ends.
 
 	Args:
-		A ([type]): [description]
-		B ([type]): [description]
-		datac ([type]): [description]
+		A (2*1 np array of floats): beginning of the line on which to project
+		B (2*1 np array of floats): end of the line on which to project
+		datac (np array): data to project
+	
+	(c) licence CCby-nc-sa : http://creativecommons.org/licenses/by-nc-sa/4.0/ 2021
+
 	"""
 
 	# Begin stepping on data
@@ -214,15 +220,21 @@ def project(A, B, datac):
 ######### Main code ###############
 if __name__ == "__main__":
 
-	print('Plotting Pecube forward modelling results...')
-	print('\t\tWritten by Xavier Robert, 07/2021\n')
+	print(u'Plotting Pecube V4+ forward modelling results...')
+	print(u'\t\tWritten by Xavier Robert, 07/2021\n')
+	# Check if the input files exist,
+	if not os.path.isfile(datafnme):
+		raise NameError(u'\033[91mERROR:\033[00m F** input file %s does not exist' % datafnme)
+	if not os.path.isfile(inputdata):
+		print(u'\n \033[91mWarning:\033[00m No %s file, I am skipping the plot of the error bars...\n' % inputdata)
+		inputdata = None
 	# Check if the Graphs/ folder exists, if not create it
 	if os.path.exists(graphpath) == False:
-		print('Output folder %s/ does not exist...' %(str(graphpath)))
-		print('I am creating it...')
+		print(u'Output folder %s/ does not exist...' %(str(graphpath)))
+		print(u'I am creating it...')
 		os.mkdir(graphpath)
 	else:
-		print('Folder %s/ already exists, I will write in it and erase previous pdf files' %(str(graphpath)))
+		print(u'\033[91mWarning:\033[00m Folder %s/ already exists, I will write in it and erase previous pdf files' %(str(graphpath)))
 	
 	########
 	# Read data files
@@ -231,13 +243,13 @@ if __name__ == "__main__":
 
 	########
 	if 'Longitude' in profiletype:
-		print('\tPlotting longitudinal transect')
+		print(u'\tPlotting longitudinal transect')
 		# plot longitude transect
 		# Loop on the data to plot
 		fig1 = plt.figure()
 		for item in dataplot:
 			if inputdata:
-				plt.errorbar(datac['LON'], datac[agecol[item]+'OBS'], yerr = inputc[errname[item]], 
+				plt.errorbar(inputc['LON'], inputc[agecol[item]], yerr = inputc[errname[item]], 
 			    	         fmt = 'o', label = agename[item], color = colores[item])
 			else:
 				plt.plot(datac['LON'], datac[agecol[item]+'OBS'], 
@@ -253,21 +265,21 @@ if __name__ == "__main__":
 	
 		# set legend
 		plt.legend()
-		plt.xlabel('Longitude (°)')
-		plt.ylabel('Age (Ma)')
+		plt.xlabel(u'Longitude (°)')
+		plt.ylabel(u'Age (Ma)')
 		plt.title(graphtitle)
 
 		plt.savefig(graphpath + '/' + graphtitle +'_long.pdf')
 		fig1.clear()
 
 	if 'Latitude' in profiletype:
-		print('\tPlotting latitudinal transect')
+		print(u'\tPlotting latitudinal transect')
 		# plot latitude transect
 		# Loop on the data to plot
 		fig1 = plt.figure()
 		for item in dataplot:
 			if inputdata:
-				plt.errorbar(datac['LAT'], datac[agecol[item]+'OBS'], yerr = inputc[errname[item]], 
+				plt.errorbar(inputc['LAT'], inputc[agecol[item]], yerr = inputc[errname[item]], 
 			    	         fmt = 'o', label = agename[item], color = colores[item])
 			else:
 				plt.plot(datac['LAT'], datac[agecol[item]+'OBS'], 
@@ -283,21 +295,21 @@ if __name__ == "__main__":
 	
 		# set legend
 		plt.legend()
-		plt.xlabel('Latitude (°)')
-		plt.ylabel('Age (Ma)')
+		plt.xlabel(u'Latitude (°)')
+		plt.ylabel(u'Age (Ma)')
 		plt.title(graphtitle)
 
 		plt.savefig(graphpath + '/' + graphtitle +'_lat.pdf')
 		fig1.clear()
 
 	if 'Altitude' in profiletype:
-		print('\tPlotting Age-Elevation transect')
+		print(u'\tPlotting Age-Elevation transect')
 		# plot Altitude transect
 		# Loop on the data to plot
 		fig1 = plt.figure()
 		for item in dataplot:
 			if inputdata:
-				plt.errorbar(datac[agecol[item]+'OBS'], datac['HEIGHTOBS'], xerr = inputc[errname[item]], 
+				plt.errorbar(inputc[agecol[item]], inputc['HEIGHT'], xerr = inputc[errname[item]], 
 			    	         fmt = 'o', label = agename[item], color = colores[item])
 			else:
 				plt.plot(datac[agecol[item]+'OBS'], datac['HEIGHTOBS'], 
@@ -316,15 +328,15 @@ if __name__ == "__main__":
 	
 		# set legend
 		plt.legend()
-		plt.ylabel('Elevation (m)')
-		plt.xlabel('Age (Ma)')
+		plt.ylabel(u'Elevation (m)')
+		plt.xlabel(u'Age (Ma)')
 		plt.title(graphtitle)
 
 		plt.savefig(graphpath + '/' + graphtitle +'_Alt.pdf')
 		fig1.clear()
 
 	if 'Projected' in profiletype and A and B:
-		print('\tPlotting projected transect')
+		print(u'\tPlotting projected transect')
 		# plot Projected transect
 		# Compute projected coordinates
 		coordproj = project(A, B, datac)
@@ -350,16 +362,16 @@ if __name__ == "__main__":
 	
 		# set legend
 		plt.legend()
-		plt.xlabel('Distance along transect (km)')
-		plt.ylabel('Age (Ma)')
-		plt.title(graphtitle)
+		plt.xlabel(u'Distance along transect (km)')
+		plt.ylabel(u'Age (Ma)')
+		plt.title(graphtitle + ' along A %s - B %s' %(str(A), str(B)))
 
 		plt.savefig(graphpath + '/' + graphtitle +'_Proj.pdf')
 		fig1.clear()
 
 	########
 	# Plot Altitude comparison
-	print('\tPlotting altitude comparison')
+	print(u'\tPlotting altitude comparison')
 	fig2 = plt.figure()
 	plt.gca().set_aspect('equal')
 	# Plot 1:1 line
@@ -380,11 +392,12 @@ if __name__ == "__main__":
 	plt.xlim(left = min(min(datac[agecol['alt']+'OBS']), min(datac[agecol['alt']+'PRED']), 0), 
 			 right = max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED'])))
 
-	plt.xlabel('Observed elevation (m)')
-	plt.ylabel('Predicted elevation (m)')
+	plt.xlabel(u'Observed elevation (m)')
+	plt.ylabel(u'Predicted elevation (m)')
 	plt.title(graphtitle)
 
 	plt.savefig(graphpath + '/' + graphtitle +'_Compare_Alt.pdf')
 	fig2.clear()
 
+	print('\nEND')
 	### End
