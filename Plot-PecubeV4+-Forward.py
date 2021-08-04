@@ -346,7 +346,7 @@ if __name__ == "__main__":
 		fig1 = plt.figure()
 		for item in dataplot:
 			if inputdata:
-				plt.errorbar(coordprojinputc, datac[agecol[item]+'OBS'], yerr = inputc[errname[item]], 
+				plt.errorbar(coordprojinputc, inputc[agecol[item]], yerr = inputc[errname[item]], 
 			    	         fmt = 'o', label = agename[item], color = colores[item])
 			else:
 				plt.plot(coordproj, datac[agecol[item]+'OBS'], 
