@@ -64,7 +64,7 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
             Nparam2D = int(line[-13:len(line)])
             # Check if the number of plots asked is compatible with the number of 2D marginals computed
             if len(dataplot) > Nparam2D:
-                raise ValueError('ERROR: Number of plots (%s) > Number of 2D marginals computed (%s)' %(len(dataplot), Nparam2D))
+                raise ValueError('\033[91mERROR:\033[00m Number of plots (%s) > Number of 2D marginals computed (%s)' %(len(dataplot), Nparam2D))
         # Record the 2D marginals couple present in the nab.out file
         if u'2D Marginal for parameters :' in line:
             test_couple.append((int(line.split()[-2]), int(line.split()[-1])))
@@ -75,7 +75,7 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
     # check if the couples asked to plot are OK with the marginals computed
     for elem in dataplot:
         if elem not in test_couple:
-            raise ValueError('ERROR: F*** You did nto read all the comments in the beginning !!\n2D plot %s not in 2D marginals computed...\n\t\tPlease, rerun NAD with correct couples\n' %(str(elem)))
+            raise ValueError('\033[91mERROR:\033[00m F*** You did nto read all the comments in the beginning !!\n2D plot %s not in 2D marginals computed...\n\t\tPlease, rerun NAD with correct couples\n' %(str(elem)))
     
     # intitiate variable
     data1D = np.zeros((Nbins1D, 2*Nparam))
@@ -93,7 +93,7 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
     # If asked, save the data1D variable in a text file
     if pdf1d_results:
         if os.path.isfile(pdf1d_results):
-            print('\t\tWARNING: File %s already exists \n \t\tI do not erase it\n' %(pdf1d_results))
+            print('\t\t\033[91mWARNING:\033[00m File %s already exists \n \t\tI do not erase it\n' %(pdf1d_results))
         else:
             np.savetxt(pdf1d_results, data1D)
             print('\tFile %s written\n' %(pdf1d_results))
@@ -121,7 +121,7 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
     # If asked, save the data2D variable in a text file
     if pdf2d_results:
         if os.path.isfile(pdf2d_results):
-            print('\t\tWARNING: File %s already exists \n \t\tI do not erase it\n' %(pdf2d_results))
+            print('\t\t\033[91mWARNING:\033[00m File %s already exists \n \t\tI do not erase it\n' %(pdf2d_results))
         else:
             np.savetxt(pdf2d_results, data2D)
             print('\tFile %s written \n' %(pdf2d_results))
@@ -186,9 +186,9 @@ def multiplot(param, nb_var, plot,
                   0.001 : u'%4.3f'}
 
     if i_param or i_param == 0:
-        print('\tPlotting : ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (' + graph_path + 'PDF_' + str(i_param+1) + '.pdf)')
+        print('\033[96m\tPlotting :\033[00m ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (' + graph_path + 'PDF_' + str(i_param+1) + '.pdf)')
     else: 
-        print('\tPlotting : ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (' + graph_path + 'PDF.pdf)')
+        print('\033[96m\tPlotting :\033[00m ' + str(param[plot[0]-1]) + ' vs ' + str((param[plot[1]-1])) + ' (' + graph_path + 'PDF.pdf)')
 
     # Plot the results as a scatter plot
     fig, ax = plt.subplots(figsize = (7, 6))
@@ -204,7 +204,7 @@ def multiplot(param, nb_var, plot,
                            
     # Find the lowest misfit run and return the line/run number
     if np.isnan(min(nb_var[0])):
-        raise ValueError('\t\tERROR: one of the misifit is NaN; \n\tthis is probably because you had an issue with the multithread inversion process...\n\tRe-run the inversion with 1 core only.')
+        raise ValueError('\t\t\033[91mERROR:\033[00m one of the misifit is NaN; \n\tthis is probably because you had an issue with the multithread inversion process...\n\tRe-run the inversion with 1 core only.')
         # This error is known with clusters using OAR protocols.
         # It seems that there are errors when nodes discuss with themselves, 
         # Some misfit became NaN, and the misfits printed in the results files 
@@ -288,7 +288,7 @@ def multiplot(param, nb_var, plot,
                              levels = 3, cmap = 'hot')
             plt.clabel(CS, inline = 2, fontsize = 12)
         except UserWarning:
-            print('\t\tWARNING: No contour levels plotted')
+            print('\t\t\033[91mWARNING:\033[00m No contour levels plotted')
     
     # Start 1D PDF or/and 2D PDF    
     if PDF_1D:
@@ -397,7 +397,7 @@ def plotgfit(data1D, i, pars, ipeak = None):
     plt.fill_between(data1D.T[2*i], 
                      gaussian(data1D.T[2*i], *pars),
                      0,
-                     where = ((data1D.T[2*i] >= pars[1] - pars[2]) & (data1D.T[2*i] <= pars[1] + pars[2])),
+                     where = ((data1D.T[2*i] >= pars[1] - abs(pars[2])) & (data1D.T[2*i] <= pars[1] + abs(pars[2]))),
                      alpha=0.30, 
                      color='green', 
                      interpolate=True,
@@ -415,7 +415,7 @@ def plotgfit(data1D, i, pars, ipeak = None):
 
 
 ##########################################################################################
-def statsparam(data1D, param, graph_path  = 'NA/Graphs/', size_x = 15, size_y = 15):
+def statsparam(data1D, param, graph_path  = 'NA/Graphs/', peak_thres = 0.05, peak_min_dist = 30, size_x = 15, size_y = 15):
     """
     Function to find the number of gaussian functions, to compute their mean and sigma,
     and to plot the gaussians fit
@@ -427,6 +427,10 @@ def statsparam(data1D, param, graph_path  = 'NA/Graphs/', size_x = 15, size_y = 
         graph_path (str, optional) : Path where to save graphs and results Usually NA/Graphs.
                                      Do not forget the '/' at the end.
                                      Defaults to 'NA/Graphs/'.
+        peak_thres (float, optional): Threshold to find peaks; between 0. and 1.
+                                      Default = 0.05.
+        peak_min_dist (interger, optional): Minimum distance between the peaks
+                                            Default = 30.
         size_x (int, optional): Size of the font for the x axes label. 
                                 Defaults to 15.
         size_y (int, optional): Size of the font for the y axes label. 
@@ -440,7 +444,7 @@ def statsparam(data1D, param, graph_path  = 'NA/Graphs/', size_x = 15, size_y = 
 
     # Faire la boucle sur i in range (0, len(param)):
     for i in range (0, len(param)):
-        print('\t%s' %(param[i]))
+        print('\033[96m\t%s\033[00m' %(param[i]))
         # initiate fig
         plt.clf()
         # print the 1D-pdf
@@ -448,50 +452,84 @@ def statsparam(data1D, param, graph_path  = 'NA/Graphs/', size_x = 15, size_y = 
 
         # find number of peaks/gaussian
         indexes = peakutils.indexes(data1D.T[2*i+1], 
-                                    thres = 0.05, # Normalized threshold. Only the peaks with amplitude higher than the threshold will be detected.
+                                    thres = peak_thres, # Normalized threshold. Only the peaks with amplitude higher than the threshold will be detected.
                                     min_dist = 30)
                                     #min_dist = (max(data1D.T[2*i])-min(data1D.T[2*i]))/2) # Minimum distance between each detected peak.
                                     #min_dist = max(data1D.T[2*i])) # Minimum distance between each detected peak.
         #pplot(data1D.T[2*i], data1D.T[2*i+1], indexes)
-        print('\t\tNumber of peaks : %s' %(indexes.shape))
+        #plt.show()
+        print('\t\tNumber of peak(s) : %s' %(indexes.shape[0]))
 
         # Fit the Gaussian data
         # Compute the mean and 1 sigma erro used for the first guess of the fit
         mean = sum(data1D.T[2*i] * data1D.T[2*i+1]) / sum(data1D.T[2*i+1])
         sigma = np.sqrt(sum(data1D.T[2*i+1] * (data1D.T[2*i] - mean) ** 2) / sum(data1D.T[2*i+1]))
+        # REM: to avoid RuntimeError from curve_fit, it is easier to divide sigma by ~10;
+        #      this is done inside the curve_fit parameters
+
         # Do the fitting
-        pars, cov = curve_fit(f = gaussians,
-                            xdata = data1D.T[2*i], ydata = data1D.T[2*i+1], 
-                            p0 = np.array([np.stack([data1D.T[2*i+1][indexes[k]], data1D.T[2*i][indexes[k]], sigma]) 
-                                          for k in range(0, indexes.shape[0])]).reshape(-1),
-                            bounds=(-np.inf, np.inf))
-        # Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
-        stdevs = np.sqrt(np.diag(cov))
-        # Calculate the residuals
-        res = data1D.T[2*i+1] - gaussians(data1D.T[2*i], *pars)
+        try:
+            pars, cov = curve_fit(f = gaussians,
+                                xdata = data1D.T[2*i], ydata = data1D.T[2*i+1], 
+                                p0 = np.array([np.stack([data1D.T[2*i+1][indexes[k]], data1D.T[2*i][indexes[k]], sigma/10]) 
+                                              for k in range(0, indexes.shape[0])]).reshape(-1),
+                                bounds=(-np.inf, np.inf),
+                                check_finite = True)
+                                #maxfev = 5000)
+            i_opt = True
+        except RuntimeError:
+            print(u'\t\t\033[91mWarning:\033[00m No optimization found with the least-square method; I am trying the dogbox method')
+            try:
+                pars, cov = curve_fit(f = gaussians,
+                                    xdata = data1D.T[2*i], ydata = data1D.T[2*i+1], 
+                                    p0 = np.array([np.stack([data1D.T[2*i+1][indexes[k]], data1D.T[2*i][indexes[k]], sigma/10]) 
+                                                  for k in range(0, indexes.shape[0])]).reshape(-1),
+                                    bounds=(-np.inf, np.inf),
+                                    check_finite = True,
+                                    method = 'dogbox',
+                                    maxfev = 5000)
+                i_opt = True
+            except RuntimeError:
+                print(u'\t\t\033[91mWarning:\033[00m No optimization found also with the dogbox method; No graph will be produced')
+                i_opt = False
+                pass
 
-        for k in range(0,indexes.shape[0]):
-            # Compute the result for each peak
-            pars_1 = pars[(3*k) : (3*k+3)]
-            # print on screen results
-            print('\t\tMean & sigma (Gaussian fit %s, %0.2f %s) : %0.2f +/- %0.2f' %(str(k+1), pars_1[0]*100, chr(37), pars_1[1], pars_1[2]))
-            # Save the results in text file for each peak
-            line = (str(param[i]) + 'peak ' + str(k+1) + '\t' + str(pars[1]) + '\t' + str(stdevs[1]) +
-                                   '\t' + str(pars[2]) + '\t' + str(stdevs[2]) +
-                                   '\n')
-            fstats_w.write(line)
-            # Plot the gaussian fitted
-            plotgfit(data1D = data1D, i = i, pars = pars_1, ipeak = k+1)
+        if i_opt:
+            # Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
+            stdevs = np.sqrt(np.diag(cov))
+            # Calculate the residuals
+            res = data1D.T[2*i+1] - gaussians(data1D.T[2*i], *pars)
 
-        # Set axis names
-        plt.xlabel(param[i], fontsize=size_x)
-        plt.ylabel('Probability', fontsize=size_y)
-        plt.ylim = 0
-        plt.legend(loc = 'best')
+            for k in range(0,indexes.shape[0]):
+                # Compute the result for each peak
+                pars_1 = pars[(3*k) : (3*k+3)]
+                xerror = (max(data1D.T[2*i]) - min(data1D.T[2*i])) / 2
+                if (pars_1[1] > (min(data1D.T[2*i]) - xerror)) & (pars_1[1] < (max(data1D.T[2*i] + xerror))):
+                    # print on screen results
+                    print('\t\tMean & sigma (Gaussian fit %s, %0.2f %s) : %0.2f +/- %0.2f' %(str(k+1), pars_1[0]*100, chr(37), pars_1[1], abs(pars_1[2])))
+                    # Save the results in text file for each peak
+                    line = (str(param[i]) + 'peak ' + str(k+1) + '\t' + str(pars[1]) + '\t' + str(stdevs[1]) +
+                                           '\t' + str(pars[2]) + '\t' + str(stdevs[2]) +
+                                           '\n')
+                    fstats_w.write(line)
+                    # Plot the gaussian fitted
+                    if pars_1[0] > 0:
+                        plotgfit(data1D = data1D, i = i, pars = pars_1, ipeak = k+1)
+                    else:
+                        print(u'\t\t\t\033[91mWarning:\033[00m Negative amplitude for the fit %s...\n\t\t\t\033[91m-->\033[00m Not plotted' %(str(i)))
+                else:
+                    print(u'\t\t\t\033[91mWarning:\033[00m peak value outside of acceptable bounds ...\n\t\t\t\033[91m-->\033[00m Not plotted' )
 
-        # Saving the plots as a pdf file
-        plt.savefig(graph_path + 'PDF-1D_param' + str(i+1) + '.pdf')
-        print('\t\tPlotting PDF: '+ graph_path + 'PDF-1D_param' + str(i+1) + '.pdf\n')
+            # Set axis names
+            plt.xlabel(param[i], fontsize=size_x)
+            plt.ylabel('Probability', fontsize=size_y)
+            plt.xlim(min(data1D.T[2*i]), max(data1D.T[2*i]))
+            plt.ylim(0, None)
+            plt.legend(loc = 'best')
+
+            # Saving the plots as a pdf file
+            plt.savefig(graph_path + 'PDF-1D_param' + str(i+1) + '.pdf')
+            print('\t\tPlotting PDF: '+ graph_path + 'PDF-1D_param' + str(i+1) + '.pdf\n')
 
     # close the output text file
     fstats_w.close()
@@ -505,7 +543,8 @@ def NAplot_Pecube(param, dataplot, tick_space,
                   inv_results = 'NA/NA_results.csv', data_nab = 'NA/NAB/nab.out',
                   graph_path  = 'NA/Graphs/',
                   PDF_1D = True, PDF_2D = False, pdf1d_results = None, pdf2d_results = None,
-                  size_x = 15, size_y = 15, size_m = 15, size_plo = 50, size_mis = 50):
+                  size_x = 15, size_y = 15, size_m = 15, size_plo = 50, size_mis = 50,
+                  peak_thres = 0.05, peak_min_dist = 30):
     
     """
     Main code of NA Plot for Pecube inversions with NA
@@ -553,6 +592,10 @@ def NAplot_Pecube(param, dataplot, tick_space,
                                     Defaults to 50.
         size_mis (int, optional): Size of the markers of the misfits. 
                                     Defaults to 50.
+        peak_thres (float, optional): Threshold to find peaks; between 0. and 1.
+                                      Default = 0.05.
+        peak_min_dist (interger, optional): Minimum distance between the peaks
+                                            Default = 30.
     
     Raises:
         NameError: Input file names does not exists
@@ -570,10 +613,10 @@ def NAplot_Pecube(param, dataplot, tick_space,
     print('###########################################################################\n')
     # Check that NA_results exists
     if not os.path.isfile(inv_results):
-        raise NameError('ERROR: File %s does not exist' %(str(inv_results)))
+        raise NameError('\033[91mERROR:\033[00m File %s does not exist' %(str(inv_results)))
     # Check if the number of parameters is compatible with the number ticks_space
     if len(param) != len(tick_space):
-        raise ValueError('ERROR: the number of parameters is different than the number of ticks_space asked !\n Check it !')
+        raise ValueError('\033[91mERROR:\033[00m the number of parameters is different than the number of ticks_space asked !\n Check it !')
     
     # Loading the data, calling as many variables as given in param + 1 for the misfit
     if inv_results[-3:] == 'txt':
@@ -596,7 +639,7 @@ def NAplot_Pecube(param, dataplot, tick_space,
 
     # Check that nab.out exists
     if not os.path.isfile(data_nab): 
-        print ('WARNING: File %s does not exist\n\n' %(str(data_nab)))
+        print ('\033[91mWARNING:\033[00m File %s does not exist\n\n' %(str(data_nab)))
         PDF_1D = False
         PDF_2D = False
         
@@ -607,14 +650,14 @@ def NAplot_Pecube(param, dataplot, tick_space,
         pdf2d_results = None
         data2D = None
 
-    print('Building NAB files for plotting...')
+    print('\x1b[32;1mBuilding NAB files for plotting...\x1b[0m')
     # Build Nab files for plotting
     if PDF_1D or PDF_2D:
         data1D, data2D = read_NABout(data_nab, dataplot, pdf1d_results, pdf2d_results)
 
     # Plot data
     # Check if there is a folder to store the outputs
-    print('\nPlotting results...')
+    print('\x1b[32;1m\nPlotting results...\x1b[0m')
     if not os.path.exists(graph_path): os.mkdir(graph_path)
     if len(dataplot) > 1:
         for i in range(len(dataplot)):
@@ -632,11 +675,11 @@ def NAplot_Pecube(param, dataplot, tick_space,
                   PDF_1D, PDF_2D, graph_path)
     
     # Compute the stats, print them
-    print('Computing statistics...')
+    print('\x1b[32;1mComputing statistics...\x1b[0m')
     if not PDF_1D:
-        print('WARNING: No 1D-pdf computed --> No stats computed !')
+        print('\033[91mWARNING:\033[00m No 1D-pdf computed --> No stats computed !')
     else:
-        statsparam(data1D, param, graph_path, size_x, size_y)
+        statsparam(data1D, param, graph_path, peak_thres, peak_min_dist, size_x, size_y)
 
     print('###########################################################################\n')
     print('\t\tEnd...\n')
@@ -704,6 +747,10 @@ if __name__ == u'__main__':
     size_plo = 50
     size_mis = 50
 
+    # Parameters to find peaks
+    peak_thres = 0.05
+    peak_min_dist = 30
+
     # If you want to print the pdfs in a text file, just modify the 2 next lines
     pdf1d_results = None #'NA/NAB/PDF_DATA.txt'
     pdf2d_results = None #'NA/NAB/PDF_2D_DATA.txt'
@@ -718,5 +765,6 @@ if __name__ == u'__main__':
                   pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results,
                   tick_space = tick_space,
                   size_x = size_x, size_y = size_y, size_m = size_m,
-                  size_plo = size_plo, size_mis = size_mis
-                  )
+                  size_plo = size_plo, size_mis = size_mis,
+                  peak_thres = peak_thres, peak_min_dist = peak_min_dist)
+

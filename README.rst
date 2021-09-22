@@ -153,6 +153,14 @@ For Inverse plots, arguments are :
     14. ``size_mis`` (int, optional): Size of the markers of the misfits. 
         
         Defaults = ``50``.
+    
+    15. ``peak_thres`` (float, optional): Threshold to find peaks; between 0. and 1. See peakutils documentation.
+                                      
+        Default = 0.05.
+
+    16. peak_min_dist (interger, optional): Minimum distance between the peaks. See peakutils documentation.
+        
+        Default = 30.
 
 Examples
 --------

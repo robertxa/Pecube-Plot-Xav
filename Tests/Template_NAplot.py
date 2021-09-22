@@ -60,6 +60,10 @@ size_m = 15
 size_plo = 50
 size_mis = 50
 
+# Parameters to find peaks
+peak_thres = 0.05
+peak_min_dist = 30
+
 # If you want to print the pdfs in a text file, just modify the 2 next lines
 pdf1d_results = None #'NA/NAB/PDF_DATA.txt'
 pdf2d_results = None #'NA/NAB/PDF_2D_DATA.txt'
@@ -74,5 +78,6 @@ NAplot.NAplot_Pecube(param = param,
               pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results,
               tick_space = tick_space,
               size_x = size_x, size_y = size_y, size_m = size_m,
-               size_plo = size_plo, size_mis = size_mis
+              size_plo = size_plo, size_mis = size_mis,
+              peak_thres = peak_thres, peak_min_dist = peak_min_dist
               )
