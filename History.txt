@@ -1,0 +1,23 @@
+History changes of the python module pyPlotPecube
+
+0.1.0: 2015/06/01 
+	- First work with old Pecube forward version
+	- GPL 3.0 Licence
+
+0.2.0: 2021/07/21 
+	- First work with Pecube V4+ forward version
+	- Add projectino for projected transects
+
+1.0.1: 2021/02/18
+	- initial preliminary release for NA plots
+
+1.1.0 (2021/09/20):
+	- fit 1D NA results with a 1-peak gaussian, 
+	- plot the fit
+    - compute the stats (Mean & 1 sigma error)
+
+1.2.0 (2021/09/22): 
+	- Find number of peaks, 
+	- compute the stats for each peak
+	- built the 2 functions (Forward and NA) as one single python module
+

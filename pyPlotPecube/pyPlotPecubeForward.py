@@ -1,6 +1,9 @@
 ######!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Copyright (c) 2021 Xavier Robert <xavier.robert@ird.fr>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 """
 Script to plot Pecube 4 results in forward mode
 By Xavier Robert
@@ -18,14 +21,7 @@ INPUTS:
 
 xavier.robert@ird.fr
 
-(c) licence CCby-nc-sa : http://creativecommons.org/licenses/by-nc-sa/4.0/ 2021
-
 """
-###### History :  #######
-#   - 2021/07/16: NEW script for Pecube V4 outputs
-#	- 
-#	
-###### End History #######
 
 ###### To DO :  #######
 #   - Write the code to plot the MTL pdfs
@@ -43,113 +39,81 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-#######################################
-# Define data to plot
-# dataplot: List of data to plot ; By default, the altitude will be plotted
-#           Do not forget the simple quotes !!!
-#           ['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']
-# 			Rem: For the moment, MTL and TTp not implemented
-dataplot = ['AHe','AFT']
-
-# graphpath: name of the folder where the plot will be written
-#            Usually you do not have to change it
-graphpath = 'Graphs'
-
-# Data to plot
-#	datafnme:  results of Pecube forward modeling
-#	inputdata: input data declared in Pecube.in; This is used to plot the errorbars
-datafnme = 'Data/CompareAGE.csv'
-inputdata = 'Data/Trujillo.csv'
-
-# graphtitle: title to write on the graph
-graphtitle = 'Trujillo transect'
-
-#agerange = range of the ages to plot on the profiles
-#			[min, max]
-agerange = [0, 100]
-
-# profiletype: type of profile = ['Latitude', 'Longitude', 'Altitude', 'Projected']
-#              if [], no age profile is plotted
-#              For the moment, NO there is no projected profile; This is one thing to add ?
-#profiletype = ['Longitude']
-#profiletype = ['Projected']
-profiletype = ['Latitude', 'Longitude', 'Altitude', 'Projected']
-#profiletype = ['Latitude', 'Altitude']
-
-# A, B =  If need of a projected transect, define the line along which we will project
-# 		  With the coordinate of the point A and B defining espectivelly
-#         the begining and the end of the transect, in lat-long/WGS84
-A = [-79.1, -8.21]
-B = [-78.41, -7.83]
-
-# end define the data and parameters
-#######################################
-
-# Dictionaries definitions:
-# You may have to change it depending on your Pecube version, and on your settings...
-# agecol: respective column number of the data in the file comparison.txt
-#         needs to be changed depending on your settings in the last paragraph 
-#         of the file topo_parameters.txt
-agecol = {'alt' : 'HEIGHT',
-          'AHe' : 'AHE',
-          'AFT' : 'AFT',
-          'ZHe' : 'ZHE',
-          'ZFT' : 'ZFT',
-          'KAr' : 'KAR',
-          'BAr' : 'BAR',
-          'MAr' : 'MAR',
-          'HbAr' : 'HAR',
-          'FTL' : 'FT'
-          }
-# errname: respective column number of the error on data in the data input file 
-errname = {'AHe' : 'DAHE',
-		   'AFT' : 'DAFT',
-		   'ZHe' : 'DZHE',
-		   'ZFT' : 'DZFT',
-		   'KAr' : 'DKAR',
-           'BAr' : 'DBAR',
-           'MAr' : 'DMAR',
-           'HbAr' : 'DHAR'
-		   }
-# agename: legend of each data system         
-agename = {'AHe' : 'AHe (Ma)',
-           'AFT' : 'AFT (Ma)',
-           'ZHe' : 'ZHe (Ma)',
-           'ZFT' : 'ZFT (Ma)',
-           'KAr' : 'KAr (Ma)',
-           'BAr' : 'Biot. Ar (Ma)',
-           'MAr' : 'Musc. Ar (Ma)',
-           'HbAr' : 'Hb Ar (Ma)',
-           'FTL' : 'FT length (µm)'
-           }
-# predname: legend of each predicted system         
-predname = {'AHe' : 'Predicted AHe (Ma)',
-            'AFT' : 'Predicted AFT (Ma)',
-            'ZHe' : 'Predicted ZHe (Ma)',
-            'ZFT' : 'Predicted ZFT (Ma)',
-            'KAr' : 'Predicted KAr (Ma)',
-            'BAr' : 'Predicted Biot. Ar (Ma)',
-            'MAr' : 'Predicted Musc. Ar (Ma)',
-            'HbAr' : 'Predicted Hb Ar (Ma)',
-            'FTL' : 'Predicted FT length (µm)'
-           }
-# colores: Colors used for the different age system
-colores = {'AHe' : 'y',
-           'AFT' : 'r',
-           'ZHe' : 'g',
-           'ZFT' : 'b',
-           'KAr' : 'k',
-           'BAr' : 'c',
-           'MAr' : 'm',
-           'HbAr' : '0.75',
-           'FTL' : 'y'
-           }
-
-# Earth radius in km
-R = 6371
 
 #################################################
-#     Functions     #
+def dict_pecube():
+	"""
+	Definition of dictionnaries
+
+	You may have to change it depending on your Pecube version, and on your settings...
+	"""
+
+	# agecol: respective column number of the data in the file comparison.txt
+	#         needs to be changed depending on your settings in the last paragraph 
+	#         of the file topo_parameters.txt
+	agecol = {'alt' : 'HEIGHT',
+    	      'AHe' : 'AHE',
+        	  'AFT' : 'AFT',
+			  'ZHe' : 'ZHE',
+        	  'ZFT' : 'ZFT',
+	          'KAr' : 'KAR',
+    	      'BAr' : 'BAR',
+        	  'MAr' : 'MAR',
+	          'HbAr' : 'HAR',
+    	      'FTL' : 'FT'
+        	  }
+
+	# errname: respective column number of the error on data in the data input file 
+	errname = {'AHe' : 'DAHE',
+			   'AFT' : 'DAFT',
+			   'ZHe' : 'DZHE',
+			   'ZFT' : 'DZFT',
+			   'KAr' : 'DKAR',
+        	   'BAr' : 'DBAR',
+	           'MAr' : 'DMAR',
+    	       'HbAr' : 'DHAR'
+			   }
+
+	# agename: legend of each data system         
+	agename = {'AHe' : 'AHe (Ma)',
+    	       'AFT' : 'AFT (Ma)',
+        	   'ZHe' : 'ZHe (Ma)',
+	           'ZFT' : 'ZFT (Ma)',
+    	       'KAr' : 'KAr (Ma)',
+        	   'BAr' : 'Biot. Ar (Ma)',
+	           'MAr' : 'Musc. Ar (Ma)',
+    	       'HbAr' : 'Hb Ar (Ma)',
+        	   'FTL' : 'FT length (µm)'
+	           }
+
+	# predname: legend of each predicted system         
+	predname = {'AHe' : 'Predicted AHe (Ma)',
+    	        'AFT' : 'Predicted AFT (Ma)',
+        	    'ZHe' : 'Predicted ZHe (Ma)',
+	            'ZFT' : 'Predicted ZFT (Ma)',
+    	        'KAr' : 'Predicted KAr (Ma)',
+        	    'BAr' : 'Predicted Biot. Ar (Ma)',
+	            'MAr' : 'Predicted Musc. Ar (Ma)',
+    	        'HbAr' : 'Predicted Hb Ar (Ma)',
+        	    'FTL' : 'Predicted FT length (µm)'
+	           }
+
+	# colores: Colors used for the different age system
+	colores = {'AHe' : 'y',
+    	       'AFT' : 'r',
+        	   'ZHe' : 'g',
+	           'ZFT' : 'b',
+    	       'KAr' : 'k',
+        	   'BAr' : 'c',
+	           'MAr' : 'm',
+    	       'HbAr' : '0.75',
+        	   'FTL' : 'y'
+	           }
+			   
+	return agecol, errname, agename, predname, colores
+
+
+#################################################
 def calc_length(XA,YA,XB,YB):       
 	"""
 	function to calcule the distance on a sphere
@@ -158,15 +122,16 @@ def calc_length(XA,YA,XB,YB):
 	Read the page http://gis.stackexchange.com/questions/44064/how-to-calculate-distances-in-a-point-sequence
 
 	"""
-
-	R = 6371  # Earth diameter/2 (km)
+	# Earth radius in km
+	R = 6371
 	
 	calc_lengthd = R * np.arccos(np.sin(YA * np.pi / 180) * np.sin(YB * np.pi / 180) + \
 	                          np.cos(YA * np.pi / 180) * np.cos(YB * np.pi / 180) * \
 	                          np.cos(-XA * np.pi / 180 + XB * np.pi / 180))
 	return calc_lengthd
-# -----------
-       
+
+
+#################################################       
 def bearing(XA,YA,XB,YB):       
 	"""
 	function to calcule the bearing on a sphere
@@ -181,8 +146,8 @@ def bearing(XA,YA,XB,YB):
 
 	return bearingd
 
-#####################################
 
+#################################################
 def project(A, B, datac):
 	"""
 	Function to project lat/long data along a line defined by the lat/long coordinates
@@ -196,6 +161,9 @@ def project(A, B, datac):
 	(c) licence CCby-nc-sa : http://creativecommons.org/licenses/by-nc-sa/4.0/ 2021
 
 	"""
+
+	# Earth radius in km
+	R = 6371
 
 	# Begin stepping on data
 	longM = datac['LON']
@@ -217,11 +185,50 @@ def project(A, B, datac):
 
 	return coordproj
 
-######### Main code ###############
-if __name__ == "__main__":
 
-	print(u'Plotting Pecube V4+ forward modelling results...')
-	print(u'\t\tWritten by Xavier Robert, 07/2021\n')
+#################################################
+################# Main code #####################
+def PlotPecubeForward(datafnme, inputdata,
+					  dataplot = ['AHe','AFT'],
+					  graphpath = 'Graphs', graphtitle = None, agerange = None,
+					  profiletype = [], A = None, B = None):
+	"""[summary]
+
+	Args:
+		datafnme (string): results of Pecube forward modeling
+
+		inputdata (string): input data declared in Pecube.in; This is used to plot the errorbars
+
+		dataplot (list, optional): List of data to plot ; By default, the altitude will be plotted
+				        		    Do not forget the simple quotes !!!
+						   			['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']
+				 					Rem: For the moment, MTL and TTp not implemented.
+									Defaults to ['AHe','AFT'].
+
+		graphpath (str, optional): name of the folder where the plot will be written
+						            Usually you do not have to change it. Defaults to 'Graphs'.
+
+		graphtitle (str, optional): title to write on the graph. Defaults to None.
+
+		agerange (2*1 array of floats, optional): range of the ages to plot on the profiles
+												  [min, max]. Defaults to None.
+
+		profiletype (list, optional): type of profile = ['Latitude', 'Longitude', 'Altitude', 'Projected']
+						              If [], no age profile is plotted. Defaults to [].
+
+		A, B (floats, optional): If need of a projected transect, define the line along which we will project
+						 		  With the coordinate of the point A and B defining espectivelly
+						         the begining and the end of the transect, in lat-long/WGS84. Defaults to None.
+
+	Raises:
+		NameError: Problem with input files !
+	"""
+
+	print('###########################################################################\n')
+	print(u'\tPlotting Pecube V4+ forward modelling results...\n')
+	print('\t\t\xa9Xavier Robert - IRD-ISTerre\n')
+	print('###########################################################################\n')
+
 	# Check if the input files exist,
 	if not os.path.isfile(datafnme):
 		raise NameError(u'\033[91mERROR:\033[00m F** input file %s does not exist' % datafnme)
@@ -236,12 +243,13 @@ if __name__ == "__main__":
 	else:
 		print(u'\033[91mWarning:\033[00m Folder %s/ already exists, I will write in it and erase previous pdf files' %(str(graphpath)))
 	
-	########
 	# Read data files
 	datac = np.genfromtxt(fname = datafnme, delimiter = ',', names = True)
 	if inputdata: inputc = np.genfromtxt(fname = inputdata, delimiter = ',', names = True)
 
-	########
+	# Read dictionnaries
+	agecol, errname, agename, predname, colores =  dict_pecube()
+
 	if 'Longitude' in profiletype:
 		print(u'\tPlotting longitudinal transect')
 		# plot longitude transect
@@ -401,3 +409,57 @@ if __name__ == "__main__":
 
 	print('\nEND')
 	### End
+
+
+#################################################
+#################################################
+if __name__ == "__main__":
+	# Define data to plot
+	# dataplot: List of data to plot ; By default, the altitude will be plotted
+	#           Do not forget the simple quotes !!!
+	#           ['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']
+	# 			Rem: For the moment, MTL and TTp not implemented
+	dataplot = ['AHe','AFT']
+
+	# graphpath: name of the folder where the plot will be written
+	#            Usually you do not have to change it
+	graphpath = '../Tests/Forward/Graphs'
+
+	# Data to plot
+	#	datafnme:  results of Pecube forward modeling
+	#	inputdata: input data declared in Pecube.in; This is used to plot the errorbars
+	datafnme = '../Tests/Forward/Data/CompareAGE.csv'
+	inputdata = '../Tests/Forward/Data/Trujillo.csv'
+
+	# graphtitle: title to write on the graph
+	graphtitle = 'Trujillo transect'
+
+	#agerange = range of the ages to plot on the profiles
+	#			[min, max]
+	agerange = [0, 100]
+
+	# profiletype: type of profile = ['Latitude', 'Longitude', 'Altitude', 'Projected']
+	#              if [], no age profile is plotted
+	#              For the moment, NO there is no projected profile; This is one thing to add ?
+	#profiletype = ['Longitude']
+	#profiletype = ['Projected']
+	profiletype = ['Latitude', 'Longitude', 'Altitude', 'Projected']
+	#profiletype = ['Latitude', 'Altitude']
+
+	# A, B =  If need of a projected transect, define the line along which we will project
+	# 		  With the coordinate of the point A and B defining espectivelly
+	#         the begining and the end of the transect, in lat-long/WGS84
+	A = [-79.1, -8.21]
+	B = [-78.41, -7.83]
+
+	# end define the data and parameters
+	#######################################
+
+	PlotPecubeForward(dataplot = dataplot,
+					  graphpath = graphpath,
+					  datafnme = datafnme,
+					  inputdata = inputdata,
+					  graphtitle = graphtitle,
+					  agerange = agerange,
+					  profiletype = profiletype,
+					  A = A, B = B)
