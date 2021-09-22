@@ -9,16 +9,6 @@ Script to plot Pecube 4 results in forward mode
 By Xavier Robert
 Grenoble, 2021.07.16
 
-USAGE :
-  1- Copy this file in the main Pecube/RUNXX folder
-  2- Set (edit) which system you want to plot in the "# Define data to analysis" section (see below)
-  3- Run in the terminal: $ python Plot-PecubeV4+-Forward.py after the run of ./bin/Pecube
-  4- The plots will be in the folder RUNXX/Graphs/ where RUNXX/ is the working folder
-
-INPUTS:
-	The inputs are in the script file, in the "# Define data to analysis" section. 
-	The different arguments are described.
-
 xavier.robert@ird.fr
 
 """
