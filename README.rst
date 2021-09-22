@@ -158,9 +158,10 @@ EXAMPLES
 Two example's sripts are in the ``Tests/`` folder. Just run them from their location :
 
 .. code-block:: bash
-
-~$ python Template_ForwardPlot.py
-~$ python Template_NAPlot.py
+    
+    ~$ python Template_ForwardPlot.py
+    
+    ~$ python Template_NAPlot.py
 
 For instance, the Template_ForwardPlot.py script gives the plot:
 
