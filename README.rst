@@ -9,7 +9,7 @@ This tool have been set up to help the plot of PECUBE (Braun, 2003; Braun et al.
 
     - The Inversion_plots-XR.py permits to plot the results of NA Inversions (Sambridge, 1999 a & b) with scatter plots and 1D / 2D marginals. To plot the marginals, the results of NA Inversions should be analyzed with NAB.
 
-USAGE
+Usage
 -----
 	
 After copying the scripts in your folder ant editing the main sections to fit with your project, each script can be ran in a terminal with the command : 
@@ -48,7 +48,7 @@ and finally run the function in your Python environement :
 
     >>> NAplot.NAplot_Pecube(param = param, dataplot = dataplot, inv_results = inv_results, data_nab = data_nab, graph_path  = graph_path, PDF_1D = PDF_1D, PDF_2D = PDF_2D, pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results, tick_space = tick_space, size_x = size_x, size_y = size_y, size_m = size_m, size_plo = size_plo, size_mis = size_mis
 
-PARAMETERS
+Parameters
 ----------
 
 For Forward plots, arguments are :
@@ -154,7 +154,7 @@ For Inverse plots, arguments are :
         
         Defaults = ``50``.
 
-EXAMPLES
+Examples
 --------
 
 Two example's sripts are in the ``Tests/`` folder. Just run them from their location :
@@ -189,7 +189,10 @@ How to cite
 -----------
 
 Please, if you use this module, cite :
-``Robert X., pyPlotPecube, a python module to plot PECUBE forward and inverse modeling results (2021), DOI:Not_Atributted``
+``Robert X., pyPlotPecube, a python module to plot PECUBE forward and inverse modeling results (2021), DOI:10.5281/zenodo.5521061``
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.5521061.svg
+    :target: https://doi.org/10.5281/zenodo.5521061
 
 Contact
 -------
@@ -197,7 +200,7 @@ Contact
 If needed, do not hesitate to add a new branch or to contact the author. 
 Please, use `https://www.isterre.fr/identite_id135055.html# <https://www.isterre.fr/identite_id135055.html#>`_
 
-LICENCE
+Licence
 -------
 
 Copyright (c) 2021 Xavier Robert <xavier.robert@ird.fr>
