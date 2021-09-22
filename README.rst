@@ -167,7 +167,7 @@ For instance, the Template_ForwardPlot.py script gives the plot:
 .. image:: https://github.com/robertxa/Pecube-Plot-Xav/blob/main/Tests/Graphs/Forward.png
    :scale: 100 %
    :align: center
-   :alt: Data and predictions along a projected transect.
+   
 
 
 and the Template_NAPlot.py script permits to build the plots:
