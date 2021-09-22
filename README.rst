@@ -36,15 +36,17 @@ And then, inside a Python environement, import the function you need:
 
 .. code-block:: python
 
->>> from pyPlotPecube import pyPlotPecubeForward as Fplot
->>> from pyPlotPecube import pyPlotPecubeNA as NAplot
+    >>> from pyPlotPecube import pyPlotPecubeForward as Fplot
+
+    >>> from pyPlotPecube import pyPlotPecubeNA as NAplot
 
 and finally run the function in your Python environement :
 
 .. code-block:: python
 
->>> Fplot.PlotPecubeForward(dataplot = dataplot, graphpath = graphpath, datafnme = datafnme, inputdata = inputdata, graphtitle = graphtitle, agerange = agerange, profiletype = profiletype, A = A, B = B)
->>> NAplot.NAplot_Pecube(param = param, dataplot = dataplot, inv_results = inv_results, data_nab = data_nab, graph_path  = graph_path, PDF_1D = PDF_1D, PDF_2D = PDF_2D, pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results, tick_space = tick_space, size_x = size_x, size_y = size_y, size_m = size_m, size_plo = size_plo, size_mis = size_mis
+    >>> Fplot.PlotPecubeForward(dataplot = dataplot, graphpath = graphpath, datafnme = datafnme, inputdata = inputdata, graphtitle = graphtitle, agerange = agerange, profiletype = profiletype, A = A, B = B)
+
+    >>> NAplot.NAplot_Pecube(param = param, dataplot = dataplot, inv_results = inv_results, data_nab = data_nab, graph_path  = graph_path, PDF_1D = PDF_1D, PDF_2D = PDF_2D, pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results, tick_space = tick_space, size_x = size_x, size_y = size_y, size_m = size_m, size_plo = size_plo, size_mis = size_mis
 
 PARAMETERS
 ----------
