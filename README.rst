@@ -44,9 +44,9 @@ and finally run the function in your Python environement :
 
 .. code-block:: python
 
-    >>> Fplot.PlotPecubeForward(dataplot = dataplot, graphpath = graphpath, datafnme = datafnme, inputdata = inputdata, graphtitle = graphtitle, agerange = agerange, profiletype = profiletype, A = A, B = B)
+    >>> Fplot.PlotPecubeForward(dataplot = dataplot, graphpath = graphpath, datafnme = datafnme, inputdata = inputdata, graphtitle = graphtitle, agerange = agerange, profiletype = profiletype, size_x = size_x, size_y = size_y, A = A, B = B)
 
-    >>> NAplot.NAplot_Pecube(param = param, dataplot = dataplot, inv_results = inv_results, data_nab = data_nab, graph_path  = graph_path, PDF_1D = PDF_1D, PDF_2D = PDF_2D, pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results, tick_space = tick_space, size_x = size_x, size_y = size_y, size_m = size_m, size_plo = size_plo, size_mis = size_mis
+    >>> NAplot.NAplot_Pecube(param = param, dataplot = dataplot, inv_results = inv_results, data_nab = data_nab, graph_path  = graph_path, PDF_1D = PDF_1D, PDF_2D = PDF_2D, pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results, tick_space = tick_space, size_x = size_x, size_y = size_y, size_m = size_m, size_mis = size_mis)
 
 Parameters
 ----------
@@ -227,19 +227,15 @@ For Inverse plots, arguments are :
     
         Defaults = ``15``.
     
-    13. ``size_plo`` (int, optional): Size of the markers of the scatter plot. 
+    13. ``size_mis`` (int, optional): Size of the markers of the misfits. 
         
         Defaults = ``50``.
     
-    14. ``size_mis`` (int, optional): Size of the markers of the misfits. 
-        
-        Defaults = ``50``.
-    
-    15. ``peak_thres`` (float, optional): Threshold to find peaks; between 0. and 1. See peakutils documentation.
+    14. ``peak_thres`` (float, optional): Threshold to find peaks; between 0. and 1. See peakutils documentation.
                                       
         Default = 0.05.
 
-    16. peak_min_dist (interger, optional): Minimum distance between the peaks. See peakutils documentation.
+    15. peak_min_dist (interger, optional): Minimum distance between the peaks. See peakutils documentation.
         
         Default = 30.
 

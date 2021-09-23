@@ -1,7 +1,9 @@
 History changes of the python module pyPlotPecube
 
-1.2.2+ (20??/??/??):
-	-
+1.2.2 (2021/09/21):
+	- Clean plot forward
+	- Clean plot NA
+	- Correct Readme 
 
 1.2.1 (2021/09/22):
 	- Add peakutils parameters as inputs

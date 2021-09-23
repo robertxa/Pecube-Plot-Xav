@@ -182,7 +182,7 @@ def PlotPecubeForward(datafnme, inputdata,
 					  dataplot = ['AHe','AFT'],
 					  graphpath = 'Graphs', graphtitle = None, agerange = None,
 					  profiletype = [], A = None, B = None,
-					  size_x = 15, size_y = 15
+					  size_x = 15, size_y = 15,
 					  agename = None, predname = None, colores = None):
 	"""[summary]
 

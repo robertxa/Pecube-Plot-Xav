@@ -56,8 +56,7 @@ size_x = 15
 size_y = 15
 size_m = 15
 
-# Set the size of the markers of the scatter plot and of the misfit
-size_plo = 50
+# Set the size of the markers of the misfit
 size_mis = 50
 
 # Parameters to find peaks
@@ -78,6 +77,6 @@ NAplot.NAplot_Pecube(param = param,
               pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results,
               tick_space = tick_space,
               size_x = size_x, size_y = size_y, size_m = size_m,
-              size_plo = size_plo, size_mis = size_mis,
+              size_mis = size_mis,
               peak_thres = peak_thres, peak_min_dist = peak_min_dist
               )

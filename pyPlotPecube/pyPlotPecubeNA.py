@@ -142,7 +142,8 @@ def read_NABout(data_nab, dataplot, pdf1d_results = None, pdf2d_results = None):
 def multiplot(param, nb_var, plot,
               tick_space, 
               data1D = None, data2D = None,
-              size_x = 15, size_y = 15, size_m = 15, size_plo = 50, size_mis = 50, 
+              size_x = 15, size_y = 15, size_m = 15,
+              size_mis = 50, 
               PDF_1D = True, PDF_2D = True,
               graph_path = 'NA/Graphs/',
               i_param = None):
@@ -159,7 +160,6 @@ def multiplot(param, nb_var, plot,
         size_x      : Font size for x-axis. Defaults to 15.
         size_y      : Font size for y-axis. Defaults to 15.
         size_m      : Font size for ???. Defaults to 15.
-        size_plo    : Size of the plot. Defaults to 50.
         size_mis    : Size of the plot. Defaults to 50.
         PDF_1D      : Boolean to tell if we plot 1D-pdf (True) or not (False).
                       Defaults to True. Optional.
@@ -543,7 +543,8 @@ def NAplot_Pecube(param, dataplot, tick_space,
                   inv_results = 'NA/NA_results.csv', data_nab = 'NA/NAB/nab.out',
                   graph_path  = 'NA/Graphs/',
                   PDF_1D = True, PDF_2D = False, pdf1d_results = None, pdf2d_results = None,
-                  size_x = 15, size_y = 15, size_m = 15, size_plo = 50, size_mis = 50,
+                  size_x = 15, size_y = 15, size_m = 15,
+                  size_mis = 50,
                   peak_thres = 0.05, peak_min_dist = 30):
     
     """
@@ -588,8 +589,6 @@ def NAplot_Pecube(param, dataplot, tick_space,
                                 Defaults to 15.
         size_m (int, optional): Size of the font for the markers label. 
                                 Defaults to 15.
-        size_plo (int, optional): Size of the markers of the scatter plot. 
-                                    Defaults to 50.
         size_mis (int, optional): Size of the markers of the misfits. 
                                     Defaults to 50.
         peak_thres (float, optional): Threshold to find peaks; between 0. and 1.
@@ -665,13 +664,15 @@ def NAplot_Pecube(param, dataplot, tick_space,
             multiplot(param, nb_var, dataplot[i], 
                       tick_space, 
                       data1D, data2D,
-                      size_x, size_y, size_m, size_plo, size_mis, 
+                      size_x, size_y, size_m,
+                      size_mis, 
                       PDF_1D, PDF_2D, graph_path, i)
     else:
         multiplot(param, nb_var, dataplot[0],
                   tick_space, 
                   data1D, data2D,
-                  size_x, size_y, size_m, size_plo, size_mis, 
+                  size_x, size_y, size_m,
+                  size_mis, 
                   PDF_1D, PDF_2D, graph_path)
     
     # Compute the stats, print them
@@ -744,7 +745,6 @@ if __name__ == u'__main__':
     size_m = 15
 
     # Set the size of the markers of the scatter plot and of the misfit
-    size_plo = 50
     size_mis = 50
 
     # Parameters to find peaks
@@ -765,6 +765,6 @@ if __name__ == u'__main__':
                   pdf1d_results = pdf1d_results, pdf2d_results = pdf2d_results,
                   tick_space = tick_space,
                   size_x = size_x, size_y = size_y, size_m = size_m,
-                  size_plo = size_plo, size_mis = size_mis,
+                  size_mis = size_mis,
                   peak_thres = peak_thres, peak_min_dist = peak_min_dist)
 
