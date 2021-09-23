@@ -39,6 +39,10 @@ profiletype = ['Latitude', 'Longitude', 'Altitude', 'Projected']
 A = [-79.1, -8.21]
 B = [-78.41, -7.83]
 
+# Font size of x and y axis
+size_x = 15
+size_y = 15
+
 # end define the data and parameters
 #######################################
 
@@ -49,4 +53,5 @@ Fplot.PlotPecubeForward(dataplot = dataplot,
 				  graphtitle = graphtitle,
 				  agerange = agerange,
 				  profiletype = profiletype,
+				  size_x = size_x, size_y = size_y,
 				  A = A, B = B)

@@ -181,7 +181,9 @@ def project(A, B, datac):
 def PlotPecubeForward(datafnme, inputdata,
 					  dataplot = ['AHe','AFT'],
 					  graphpath = 'Graphs', graphtitle = None, agerange = None,
-					  profiletype = [], A = None, B = None):
+					  profiletype = [], A = None, B = None,
+					  size_x = 15, size_y = 15
+					  agename = None, predname = None, colores = None):
 	"""[summary]
 
 	Args:
@@ -206,9 +208,50 @@ def PlotPecubeForward(datafnme, inputdata,
 		profiletype (list, optional): type of profile = ['Latitude', 'Longitude', 'Altitude', 'Projected']
 						              If [], no age profile is plotted. Defaults to [].
 
+		size_x      : Font size for x-axis. Defaults to 15.
+        
+		size_y      : Font size for y-axis. Defaults to 15.
+
 		A, B (floats, optional): If need of a projected transect, define the line along which we will project
 						 		  With the coordinate of the point A and B defining espectivelly
 						         the begining and the end of the transect, in lat-long/WGS84. Defaults to None.
+		
+		agename (dict, optional): legend of each data system         
+								  If None, this is set to
+									{'AHe' : 'AHe (Ma)',
+									'AFT' : 'AFT (Ma)',
+									'ZHe' : 'ZHe (Ma)',
+									'ZFT' : 'ZFT (Ma)',
+									'KAr' : 'KAr (Ma)',
+									'BAr' : 'Biot. Ar (Ma)',
+									'MAr' : 'Musc. Ar (Ma)',
+									'HbAr' : 'Hb Ar (Ma)',
+									'FTL' : 'FT length (µm)'}
+								  Default = None. 
+		predname (dict, optional): legend of each predicted system.
+								   If None, this is set to
+									{'AHe' : 'Predicted AHe (Ma)',
+									'AFT' : 'Predicted AFT (Ma)',
+									'ZHe' : 'Predicted ZHe (Ma)',
+									'ZFT' : 'Predicted ZFT (Ma)',
+									'KAr' : 'Predicted KAr (Ma)',
+									'BAr' : 'Predicted Biot. Ar (Ma)',
+									'MAr' : 'Predicted Musc. Ar (Ma)',
+									'HbAr' : 'Predicted Hb Ar (Ma)',
+									'FTL' : 'Predicted FT length (µm)'}         
+								   Default = None. 
+		colores (dict, optional): Colors used for the different age system
+								  If None, this is set to
+									{'AHe' : 'y',
+									'AFT' : 'r',
+									'ZHe' : 'g',
+									'ZFT' : 'b',
+									'KAr' : 'k',
+									'BAr' : 'c',
+									'MAr' : 'm',
+									'HbAr' : '0.75',
+									'FTL' : 'y'}
+								  Default = None.
 
 	Raises:
 		NameError: Problem with input files !
@@ -238,7 +281,17 @@ def PlotPecubeForward(datafnme, inputdata,
 	if inputdata: inputc = np.genfromtxt(fname = inputdata, delimiter = ',', names = True)
 
 	# Read dictionnaries
-	agecol, errname, agename, predname, colores =  dict_pecube()
+	if not agename:
+		if not predname:
+			if not colores:
+				agecol, errname, agename, predname, colores =  dict_pecube()
+			else:
+				agecol, errname, agename, predname, junk =  dict_pecube()
+		else:
+			agecol, errname, agename, junk1, junk =  dict_pecube()
+	else:
+		agecol, errname, junk2, junk1, junk =  dict_pecube()
+
 
 	if 'Longitude' in profiletype:
 		print(u'\tPlotting longitudinal transect')
@@ -360,8 +413,8 @@ def PlotPecubeForward(datafnme, inputdata,
 	
 		# set legend
 		plt.legend(loc = 'best')
-		plt.xlabel(u'Distance along transect (km)')
-		plt.ylabel(u'Age (Ma)')
+		plt.xlabel(u'Distance along transect (km)', fontsize=size_x)
+		plt.ylabel(u'Age (Ma)', fontsize=size_y)
 		plt.title(graphtitle + '\nalong A %s - B %s' %(str(A), str(B)))
 
 		plt.savefig(graphpath + '/' + graphtitle +'_Proj.pdf')
@@ -377,7 +430,7 @@ def PlotPecubeForward(datafnme, inputdata,
 			 label = '1:1 line', color = 'lightgrey', alpha = 1)
 	# Plot the altitude comparison
 	plt.plot(datac[agecol['alt']+'OBS'], datac[agecol['alt']+'PRED'], 
-			 marker = 'o', linestyle = 'None', 
+			 marker = 'o', linestyle = 'None',
 			 label = 'Sample', 
 			 color = colores[dataplot[0]])
 	# Write the 1:1 text over the line
@@ -446,6 +499,10 @@ if __name__ == "__main__":
 	A = [-79.1, -8.21]
 	B = [-78.41, -7.83]
 
+	# Font size of x and y axis
+	size_x = 15
+	size_y = 15
+
 	# end define the data and parameters
 	#######################################
 
@@ -456,4 +513,5 @@ if __name__ == "__main__":
 					  graphtitle = graphtitle,
 					  agerange = agerange,
 					  profiletype = profiletype,
+					  size_x = size_x, size_y = size_y,
 					  A = A, B = B)

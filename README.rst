@@ -83,9 +83,90 @@ For Forward plots, arguments are :
         
         Defaults = ``[]``.
 
-	8. ``A``, ``B`` (floats, optional): If need of a projected transect, define the line along which we will project with the coordinate of the point A and B defining, respectivelly, the begining and the end of the transect, in lat-long/WGS84.
+    7. ``size_x`` (int, optional): Font size for x-axis. 
+    
+        Defaults = ``15``.
+        
+	8. size_y (int, optional): Font size for y-axis. 
+        
+        Defaults = ``15``.
+
+	9. ``A``, ``B`` (floats, optional): If need of a projected transect, define the line along which we will project with the coordinate of the point A and B defining, respectivelly, the begining and the end of the transect, in lat-long/WGS84.
         
         Defaults = ``None``.
+    
+    10. ``agename`` (dict, optional): legend of each data system         
+		
+        If ``None``, this is set to
+        
+            {'AHe' : 'AHe (Ma)',
+		
+            'AFT' : 'AFT (Ma)',
+		
+            'ZHe' : 'ZHe (Ma)',
+			
+            'ZFT' : 'ZFT (Ma)',
+			
+            'KAr' : 'KAr (Ma)',
+			
+            'BAr' : 'Biot. Ar (Ma)',
+			
+            'MAr' : 'Musc. Ar (Ma)',
+			
+            'HbAr' : 'Hb Ar (Ma)',
+			
+            'FTL' : 'FT length (µm)'}
+			
+        Default = ``None``. 
+	
+    11. ``predname`` (dict, optional): legend of each predicted system.
+        
+        If ``None``, this is set to:
+            
+            {'AHe' : 'Predicted AHe (Ma)',
+            
+            'AFT' : 'Predicted AFT (Ma)',
+            
+            'ZHe' : 'Predicted ZHe (Ma)',
+            
+            'ZFT' : 'Predicted ZFT (Ma)',
+            
+            'KAr' : 'Predicted KAr (Ma)',
+            
+            'BAr' : 'Predicted Biot. Ar (Ma)',
+            
+            'MAr' : 'Predicted Musc. Ar (Ma)',
+            
+            'HbAr' : 'Predicted Hb Ar (Ma)',
+            
+            'FTL' : 'Predicted FT length (µm)'}         
+        
+        Default = ``None``. 
+	
+    12. ``colores`` (dict, optional): Colors used for the different age system
+    
+        If ``None``, this is set to:
+            
+            {'AHe' : 'y',
+            
+            'AFT' : 'r',
+            
+            'ZHe' : 'g',
+            
+            'ZFT' : 'b',
+            
+            'KAr' : 'k',
+            
+            'BAr' : 'c',
+            
+            'MAr' : 'm',
+            
+            'HbAr' : '0.75',
+            
+            'FTL' : 'y'}
+        
+        Default = ``None``.
+
 
 For Inverse plots, arguments are :
 
