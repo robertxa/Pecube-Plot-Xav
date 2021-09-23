@@ -262,7 +262,7 @@ def PlotPecubeForward(datafnme, inputdata,
 		plt.ylim(bottom = agerange[0], top = agerange[1])
 	
 		# set legend
-		plt.legend()
+		plt.legend(loc = 'best')
 		plt.xlabel(u'Longitude (°)')
 		plt.ylabel(u'Age (Ma)')
 		plt.title(graphtitle)
@@ -292,7 +292,7 @@ def PlotPecubeForward(datafnme, inputdata,
 		plt.ylim(bottom = agerange[0], top = agerange[1])
 	
 		# set legend
-		plt.legend()
+		plt.legend(loc = 'best')
 		plt.xlabel(u'Latitude (°)')
 		plt.ylabel(u'Age (Ma)')
 		plt.title(graphtitle)
@@ -325,7 +325,7 @@ def PlotPecubeForward(datafnme, inputdata,
 		plt.xlim(left = agerange[0], right = agerange[1])
 	
 		# set legend
-		plt.legend()
+		plt.legend(loc = 'best')
 		plt.ylabel(u'Elevation (m)')
 		plt.xlabel(u'Age (Ma)')
 		plt.title(graphtitle)
@@ -359,10 +359,10 @@ def PlotPecubeForward(datafnme, inputdata,
 		plt.ylim(bottom = agerange[0], top = agerange[1])
 	
 		# set legend
-		plt.legend()
+		plt.legend(loc = 'best')
 		plt.xlabel(u'Distance along transect (km)')
 		plt.ylabel(u'Age (Ma)')
-		plt.title(graphtitle + ' along A %s - B %s' %(str(A), str(B)))
+		plt.title(graphtitle + '\nalong A %s - B %s' %(str(A), str(B)))
 
 		plt.savefig(graphpath + '/' + graphtitle +'_Proj.pdf')
 		fig1.clear()
@@ -378,7 +378,8 @@ def PlotPecubeForward(datafnme, inputdata,
 	# Plot the altitude comparison
 	plt.plot(datac[agecol['alt']+'OBS'], datac[agecol['alt']+'PRED'], 
 			 marker = 'o', linestyle = 'None', 
-			 label = agename[dataplot[0]], color = colores[dataplot[0]])
+			 label = 'Sample', 
+			 color = colores[dataplot[0]])
 	# Write the 1:1 text over the line
 	plt.text((max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED']))-0)/2,
 			 (max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED']))-0)/2 - 
@@ -392,12 +393,15 @@ def PlotPecubeForward(datafnme, inputdata,
 
 	plt.xlabel(u'Observed elevation (m)')
 	plt.ylabel(u'Predicted elevation (m)')
+	plt.legend(loc = 'best')
 	plt.title(graphtitle)
 
 	plt.savefig(graphpath + '/' + graphtitle +'_Compare_Alt.pdf')
 	fig2.clear()
 
-	print('\nEND')
+	print('\n###########################################################################\n')
+	print('\t\t\t\tEND\n')
+	print('###########################################################################\n')
 	### End
 
 
