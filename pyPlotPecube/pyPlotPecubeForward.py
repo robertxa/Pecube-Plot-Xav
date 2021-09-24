@@ -452,6 +452,52 @@ def PlotPecubeForward(datafnme, inputdata,
 	plt.savefig(graphpath + '/' + graphtitle +'_Compare_Alt.pdf')
 	fig2.clear()
 
+	# Do also Age comparisons
+	for item in dataplot:
+
+		print(u'\tPlotting %s age comparison' %(str(item)))
+		fig2 = plt.figure()
+		plt.gca().set_aspect('equal')
+		# Plot 1:1 line
+		plt.plot([0,8000], [0,8000], marker = 'None', linestyle = '-', 
+				 label = '1:1 line', color = 'lightgrey', alpha = 1)
+		# Plot the age comparison
+		# And add error bars on data
+		if inputdata:
+			plt.errorbar(datac[agecol[item]+'OBS'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)], 
+						 datac[agecol[item]+'PRED'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)],
+						 xerr = inputc[errname[item]][np.logical_not(np.isnan(inputc[errname[item]]))],
+			    	     fmt = 'o', label = 'Sample', color = colores[item])
+		else:
+			plt.plot(datac[agecol[item]+'OBS'], datac[agecol[item]+'PRED'], 
+				 		 marker = 'o', linestyle = 'None',
+						 label = 'Sample', 
+						 color = colores[item])
+
+		# Write the 1:1 text over the line
+		plt.text((max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2,
+				 (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2 - 
+				      (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/20,
+				 '1:1', rotation = 45, color = 'lightgrey', alpha = 1, ha = 'center', va = 'center')
+
+		plt.ylim(bottom = min(min(abs(datac[agecol[item]+'OBS'])), 
+					 		  min(abs(datac[agecol[item]+'PRED']))), 
+	    	     top = max(max(datac[agecol[item]+'OBS']), 
+				 		   max(datac[agecol[item]+'PRED'])))
+		plt.xlim(left = min(min(abs(datac[agecol[item]+'OBS'])), 
+							min(abs(datac[agecol[item]+'PRED']))), 
+				 right = max(max(datac[agecol[item]+'OBS']), 
+				 			 max(datac[agecol[item]+'PRED'])))
+
+		plt.xlabel(u'%s Observed (Ma)' %(str(item)))
+		plt.ylabel(u'%s Predicted (Ma)' %(str(item)))
+		plt.legend(loc = 'best')
+		plt.title(graphtitle)
+
+		plt.savefig(graphpath + '/' + graphtitle +'_Compare_' +str(item) + '.pdf')
+		fig2.clear()
+
+
 	print('\n###########################################################################\n')
 	print('\t\t\t\tEND\n')
 	print('###########################################################################\n')

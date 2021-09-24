@@ -1,5 +1,8 @@
 History changes of the python module pyPlotPecube
 
+1.2.3 (2021/09/24)
+	- Add age and predictions comparison graph, with errorbars
+
 1.2.2 (2021/09/21):
 	- Clean plot forward
 	- Clean plot NA
