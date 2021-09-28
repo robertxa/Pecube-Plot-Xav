@@ -228,6 +228,7 @@ def PlotPecubeForward(datafnme, inputdata,
 									'HbAr' : 'Hb Ar (Ma)',
 									'FTL' : 'FT length (µm)'}
 								  Default = None. 
+
 		predname (dict, optional): legend of each predicted system.
 								   If None, this is set to
 									{'AHe' : 'Predicted AHe (Ma)',
@@ -240,6 +241,7 @@ def PlotPecubeForward(datafnme, inputdata,
 									'HbAr' : 'Predicted Hb Ar (Ma)',
 									'FTL' : 'Predicted FT length (µm)'}         
 								   Default = None. 
+								   
 		colores (dict, optional): Colors used for the different age system
 								  If None, this is set to
 									{'AHe' : 'y',

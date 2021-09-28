@@ -378,10 +378,11 @@ def plotgfit(data1D, i, pars, ipeak = None):
     Plot the gaussian fitted with the peak and the 1 sigma error
 
     Args:
-        data1D ([type]): [description]
-        i ([type]): [description]
-        pars ([type]): [description]
-        ipeak ([type], optional): [description]. Defaults to None.
+        data1D (array)           : 1D-pdf data
+        i (integer)              : Number of the parameter to plot
+        pars (array)             : Gaussian(s) fit results for the parameter i
+        ipeak (integer, optional): Number of peaks/gaussians. 
+                                    Defaults to None.
     """
     
     if ipeak == 1 : labelname = '1-peak Gaussian fit'
@@ -422,19 +423,26 @@ def statsparam(data1D, param, graph_path  = 'NA/Graphs/', peak_thres = 0.05, pea
 
     INPUTS:
         data1D ([np.array])   : Array of 1D-pdfs for each parameter
+
         param (list of string): List the name of the parameters 
                                 in the same order than define in Pecube inversion
+
         graph_path (str, optional) : Path where to save graphs and results Usually NA/Graphs.
                                      Do not forget the '/' at the end.
                                      Defaults to 'NA/Graphs/'.
+
         peak_thres (float, optional): Threshold to find peaks; between 0. and 1.
                                       Default = 0.05.
+
         peak_min_dist (interger, optional): Minimum distance between the peaks
                                             Default = 30.
+
         size_x (int, optional): Size of the font for the x axes label. 
                                 Defaults to 15.
+
         size_y (int, optional): Size of the font for the y axes label. 
                                 Defaults to 15.
+
     """
     
     # Open the text file where to put the results
@@ -558,47 +566,62 @@ def NAplot_Pecube(param, dataplot, tick_space,
                              Exemple : param=['Offset (km)','Basal Temperature (°C)','Slip rate (km∕Ma)']
                              /!\ IF YOU WANT TO USE A SLASH USE THIS ONE --> '∕' <-- , IT'S A UNICODE DIVISION SYMBOL
                             WINDOWS AND OSX DON'T ALLOW THE USE OF THE REGULAR SLASH 
+
         dataplot (list of couple of integers): Set the couple of variables to plot against each other
                                                Exemple : Offset vs Slip rates
                                                dataplot = [(1,3)] -->  plot=(1,3)
                                                If you plot 2D pdfs (contours), please, CHECK that the couple of parameters to plot
                                                are the same and in the same order than in the nab.in file.
                                                This python script checks it and will insult you if this is not compatible !!!
+
         tick_space (array of floats): Set the space between ticks for x and y axes for each parameters
                                       (same order than the list param).
                                       If the tick format does not fit your variables, 
                                       you may need to modify the dictionnary tick_order in the function multiplot
+
         inv_results (str, optional): Name of the NA file with the inversion results; Usually NA_Results.
                                      Defaults to 'NA/NA_results.csv'.
+
         data_nab (str, optional): Name of the NAB file with the inversion results. Usually nab.out.
                                   Defaults to 'NA/NAB/nab.out'.
+
         graph_path (str, optional) : Path where to save graphs and results Usually NA/Graphs.
                                      Do not forget the '/' at the end.
                                      Defaults to 'NA/Graphs/'.
+
         PDF_1D (bool, optional): Choose if you want the 1-PDFs (Probability Density Function) 
                                  Defaults to True.
+
         PDF_2D (bool, optional): Choose if you want the 2-PDFs (Probability Density Function) 
                                  Defaults to False.
+
         pdf1d_results (string, optional): Print the 1-pdfs in a text file.
                                           Defaults to None.
+
         pdf2d_results (string, optional): Print the 2-pdfs in a text file.
                                           Defaults to None.
+
         size_x (int, optional): Size of the font for the x axes label. 
                                 Defaults to 15.
+
         size_y (int, optional): Size of the font for the y axes label. 
                                 Defaults to 15.
+
         size_m (int, optional): Size of the font for the markers label. 
                                 Defaults to 15.
+
         size_mis (int, optional): Size of the markers of the misfits. 
                                     Defaults to 50.
+
         peak_thres (float, optional): Threshold to find peaks; between 0. and 1.
                                       Default = 0.05.
+
         peak_min_dist (interger, optional): Minimum distance between the peaks
                                             Default = 30.
     
     Raises:
-        NameError: Input file names does not exists
-        ValueError: Problems with number of values or with NaN
+        NameError  : Input file names does not exists
+        ValueError : Problems with number of values or with NaN
         ImportError: File format not supported, please, change the format
     """
 
