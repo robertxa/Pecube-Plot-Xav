@@ -260,7 +260,7 @@ Two example's sripts are in the ``Tests/`` folder. Just run them from their loca
 
 For instance, the Template_ForwardPlot.py script gives the plot:
 
-.. image:: https://github.com/robertxa/Pecube-Plot-Xav/tree/master/Tests/Graphs/Forward.png
+.. image:: `https://github.com/robertxa/Pecube-Plot-Xav/tree/master/Tests/Graphs/Forward.png`
    :scale: 50 %
    :align: center
    :alt: Data and predictions along a projected transect.
