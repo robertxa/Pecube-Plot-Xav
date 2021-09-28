@@ -261,7 +261,7 @@ Two example's sripts are in the ``Tests/`` folder. Just run them from their loca
 For instance, the Template_ForwardPlot.py script gives the plot:
 
 .. image:: Tests/Graphs/Forward.png
-   :scale: 30 %
+   :scale: 20 %
    :align: center
    :alt: Data and predictions along a projected transect.
 
@@ -269,12 +269,12 @@ For instance, the Template_ForwardPlot.py script gives the plot:
 and the Template_NAPlot.py script permits to build the plots:
 
 .. image:: Tests/Graphs/NA-1.png
-   :scale: 30 %
+   :scale: 10 %
    :align: center
    :alt: NA inversion results for 2 parameters; on the scatter plot, each point corresponds to a model, and the color corresponds to the value of the misfit for that model; The curves on the sides shows the 1D-pdf of each parameter.
 
 .. image:: Tests/Graphs/NA-2.png
-   :scale: 30 %
+   :scale: 10 %
    :align: center
    :alt: curve fitting of the 1D-pdf of one parameter after NA inversion.
 
