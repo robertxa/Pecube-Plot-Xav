@@ -53,6 +53,10 @@ You can also write a script that facilitate the call of the function with the ri
 Parameters
 ----------
 
+.. currentmodule:: pyPlotPecube/pyPlotPecubeForward
+.. autofunction:: PlotPecubeForward
+
+
 For Forward plots, arguments are :
 
     1. ``datafnme`` (string): results of Pecube forward modeling.
