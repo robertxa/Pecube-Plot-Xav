@@ -260,24 +260,21 @@ Two example's sripts are in the ``Tests/`` folder. Just run them from their loca
 
 For instance, the Template_ForwardPlot.py script gives the plot:
 
-..
-    .. image:: `https://github.com/robertxa/Pecube-Plot-Xav/tree/master/Tests/Graphs/Forward.png`_
-
 .. image:: Tests/Graphs/Forward.png
-   :scale: 50 %
+   :scale: 30 %
    :align: center
    :alt: Data and predictions along a projected transect.
 
 
 and the Template_NAPlot.py script permits to build the plots:
 
-.. image:: https://github.com/robertxa/Pecube-Plot-Xav/tree/master/Tests/Graphs/NA-1.png
-   :scale: 50 %
+.. image:: Tests/Graphs/NA-1.png
+   :scale: 30 %
    :align: center
    :alt: NA inversion results for 2 parameters; on the scatter plot, each point corresponds to a model, and the color corresponds to the value of the misfit for that model; The curves on the sides shows the 1D-pdf of each parameter.
 
-.. image:: https://github.com/robertxa/Pecube-Plot-Xav/tree/master/Tests/Graphs/NA-2.png
-   :scale: 50 %
+.. image:: Tests/Graphs/NA-2.png
+   :scale: 30 %
    :align: center
    :alt: curve fitting of the 1D-pdf of one parameter after NA inversion.
 
