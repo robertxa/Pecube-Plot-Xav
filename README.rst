@@ -260,7 +260,7 @@ Two example's sripts are in the ``Tests/`` folder. Just run them from their loca
 
 For instance, the Template_ForwardPlot.py script gives the plot:
 
-.. image:: Tests/Graphs/Forward.png
+.. figure:: Tests/Graphs/Forward.png
    :scale: 20 %
    :align: center
    :alt: Data and predictions along a projected transect.
