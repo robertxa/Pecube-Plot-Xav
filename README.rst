@@ -265,7 +265,7 @@ For instance, the Template_ForwardPlot.py script gives the plot:
    :align: center
    :figclass: align-center 
 
-   Data and predictions along a projected transect.
+   **Figure 1:** Data and predictions along a projected transect.
 
 
 and the Template_NAPlot.py script permits to build the plots:
@@ -275,14 +275,14 @@ and the Template_NAPlot.py script permits to build the plots:
    :align: center
    :figclass: align-center 
 
-   NA inversion results for 2 parameters; on the scatter plot, each point corresponds to a model, and the color corresponds to the value of the misfit for that model; The curves on the sides shows the 1D-pdf of each parameter.
+   **Figure 2:** NA inversion results for 2 parameters; on the scatter plot, each point corresponds to a model, and the color corresponds to the value of the misfit for that model; The curves on the sides shows the 1D-pdf of each parameter.
 
 .. figure:: Tests/Graphs/NA-2.png
    :scale: 10 %
    :align: center
    :figclass: align-center 
 
-   curve fitting of the 1D-pdf of one parameter after NA inversion.
+   **Figure 3:** Curve fitting of the 1D-pdf of one parameter after NA inversion.
 
 How to cite
 -----------
