@@ -58,6 +58,8 @@ Parameters
 ..
     .. autofunction:: PlotPecubeForward
 
+PlotPecubeForward
+^^^^^^^^^^^^^^^^^
 
 For Forward plots, arguments are :
 
@@ -175,6 +177,8 @@ For Forward plots, arguments are :
         
         Default = ``None``.
 
+NAplot_Pecube
+^^^^^^^^^^^^^
 
 For Inverse plots, arguments are :
 
@@ -301,7 +305,10 @@ Please, use `https://www.isterre.fr/identite_id135055.html# <https://www.isterre
 Licence
 -------
 
-Copyright (c) 2021 Xavier Robert <xavier.robert@ird.fr>
+...
+    Copyright (c) 2021 Xavier Robert <xavier.robert@ird.fr>
+
+Copyright (c) 2021 `Xavier Robert <mailto:xavier.robert@ird.fr>`
 
 This package is licenced with <SPDX-License-Identifier: GPL-3.0-or-later>
 
