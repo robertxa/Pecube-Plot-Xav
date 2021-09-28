@@ -55,7 +55,7 @@ Parameters
 
 .. currentmodule:: pyPlotPecube/pyPlotPecubeForward
 
-.. autofunction:: PlotPecubeForward
+.. autofunction:: pyPlotPecubeForward.PlotPecubeForward
 
 
 For Forward plots, arguments are :
