@@ -52,11 +52,9 @@ You can also write a script that facilitate the call of the function with the ri
 
 Parameters
 ----------
-..
-    .. currentmodule:: pyPlotPecube/pyPlotPecubeForward
+.. .. currentmodule:: pyPlotPecube/pyPlotPecubeForward
 
-..
-    .. autofunction:: PlotPecubeForward
+.. .. autofunction:: PlotPecubeForward
 
 PlotPecubeForward
 ^^^^^^^^^^^^^^^^^
@@ -245,11 +243,11 @@ For Inverse plots, arguments are :
     
     14. ``peak_thres`` (float, optional): Threshold to find peaks; between 0. and 1. See peakutils documentation.
                                       
-        Default = 0.05.
+        Default = ``0.05``.
 
     15. peak_min_dist (interger, optional): Minimum distance between the peaks. See peakutils documentation.
         
-        Default = 30.
+        Default = ``30``.
 
 Examples
 --------
