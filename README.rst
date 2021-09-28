@@ -9,6 +9,9 @@ This tool have been set up to help the plot of PECUBE (Braun, 2003; Braun et al.
 
     - The Inversion_plots-XR.py permits to plot the results of NA Inversions (Sambridge, 1999 a & b) with scatter plots and 1D / 2D marginals. To plot the marginals, the results of NA Inversions should be analyzed with NAB.
 
+.. toctree::
+    :numbered:
+
 Usage
 -----
 	
@@ -261,7 +264,7 @@ Two example's sripts are in the ``Tests/`` folder. Just run them from their loca
 For instance, the Template_ForwardPlot.py script gives the plot:
 
 .. figure:: Tests/Graphs/Forward.png
-   :scale: 50%
+   :scale: 50 %
    :align: center
    :figclass: align-center 
 
