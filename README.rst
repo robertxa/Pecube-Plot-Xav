@@ -263,6 +263,7 @@ For instance, the Template_ForwardPlot.py script gives the plot:
 .. figure:: Tests/Graphs/Forward.png
    :scale: 20 %
    :align: center
+   :figclass: align-center
    
    Data and predictions along a projected transect.
 
