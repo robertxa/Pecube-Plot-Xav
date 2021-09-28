@@ -52,9 +52,11 @@ You can also write a script that facilitate the call of the function with the ri
 
 Parameters
 ----------
+..
+    .. currentmodule:: pyPlotPecube/pyPlotPecubeForward
 
-.. currentmodule:: pyPlotPecube/pyPlotPecubeForward
-.. autofunction:: PlotPecubeForward
+..
+    .. autofunction:: PlotPecubeForward
 
 
 For Forward plots, arguments are :
