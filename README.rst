@@ -307,7 +307,7 @@ Licence
 
 .. Copyright (c) 2021 Xavier Robert <xavier.robert@ird.fr>
 
-Copyright (c) 2021 `Xavier Robert <xavier.robert@ird.fr>`
+Copyright (c) 2021 `Xavier Robert <xavier.robert@ird.fr>`_
 
 This package is licenced with <SPDX-License-Identifier: GPL-3.0-or-later>
 
