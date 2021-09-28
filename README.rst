@@ -263,7 +263,8 @@ For instance, the Template_ForwardPlot.py script gives the plot:
 .. figure:: Tests/Graphs/Forward.png
    :scale: 20 %
    :align: center
-   :alt: Data and predictions along a projected transect.
+   
+   Data and predictions along a projected transect.
 
 
 and the Template_NAPlot.py script permits to build the plots:
