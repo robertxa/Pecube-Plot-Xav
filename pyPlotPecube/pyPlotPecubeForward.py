@@ -178,7 +178,7 @@ def project(A, B, datac):
 
 #################################################
 ################# Main code #####################
-def PlotPecubeForward(datafnme, inputdata,
+def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = None,
 					  dataplot = ['AHe','AFT'],
 					  graphpath = 'Graphs', graphtitle = None, agerange = None,
 					  profiletype = [], A = None, B = None,
@@ -190,6 +190,15 @@ def PlotPecubeForward(datafnme, inputdata,
 		datafnme (string): results of Pecube forward modeling
 
 		inputdata (string): input data declared in Pecube.in; This is used to plot the errorbars
+
+		inputdataPTt (str, optional): Path and file name of the input PTt data file 
+									  Need to be given if 'TTp' in dataplot
+        							  Default = None 
+
+    	outputdataPTt (str, optional): Path and file name of the output PTt prediction/comparison file
+									   Usually, this is 'output/CompareTT.csv'
+									   Need to be given if 'TTp' in dataplot
+        							   Default = None
 
 		dataplot (list, optional): List of data to plot ; By default, the altitude will be plotted
 				        		    Do not forget the simple quotes !!!
@@ -301,17 +310,18 @@ def PlotPecubeForward(datafnme, inputdata,
 		# Loop on the data to plot
 		fig1 = plt.figure()
 		for item in dataplot:
-			if inputdata:
-				plt.errorbar(inputc['LON'], inputc[agecol[item]], yerr = inputc[errname[item]], 
-			    	         fmt = 'o', label = agename[item], color = colores[item])
-			else:
-				plt.plot(datac['LON'], datac[agecol[item]+'OBS'], 
-			    	     marker = 'o', linestyle = 'None', 
-						 label = agename[item], color = colores[item])
+			if item != 'TTp':
+				if inputdata:
+					plt.errorbar(inputc['LON'], inputc[agecol[item]], yerr = inputc[errname[item]], 
+			    		         fmt = 'o', label = agename[item], color = colores[item])
+				else:
+					plt.plot(datac['LON'], datac[agecol[item]+'OBS'], 
+			    		     marker = 'o', linestyle = 'None', 
+							 label = agename[item], color = colores[item])
 		
-			plt.plot(datac['LON'], datac[agecol[item]+'PRED'], 
-		    	     marker = 's', linestyle = 'None', 
-					 label = predname[item], color = colores[item], alpha = 0.3)
+				plt.plot(datac['LON'], datac[agecol[item]+'PRED'], 
+		    		     marker = 's', linestyle = 'None', 
+						 label = predname[item], color = colores[item], alpha = 0.3)
 
 		# Remove -9999 values from the graph (= no data values)	
 		plt.ylim(bottom = agerange[0], top = agerange[1])
@@ -331,17 +341,18 @@ def PlotPecubeForward(datafnme, inputdata,
 		# Loop on the data to plot
 		fig1 = plt.figure()
 		for item in dataplot:
-			if inputdata:
-				plt.errorbar(inputc['LAT'], inputc[agecol[item]], yerr = inputc[errname[item]], 
-			    	         fmt = 'o', label = agename[item], color = colores[item])
-			else:
-				plt.plot(datac['LAT'], datac[agecol[item]+'OBS'], 
-			    	     marker = 'o', linestyle = 'None', 
-						 label = agename[item], color = colores[item])
+			if item != 'TTp':
+				if inputdata:
+					plt.errorbar(inputc['LAT'], inputc[agecol[item]], yerr = inputc[errname[item]], 
+			    		         fmt = 'o', label = agename[item], color = colores[item])
+				else:
+					plt.plot(datac['LAT'], datac[agecol[item]+'OBS'], 
+			    		     marker = 'o', linestyle = 'None', 
+							 label = agename[item], color = colores[item])
 		
-			plt.plot(datac['LAT'], datac[agecol[item]+'PRED'], 
-		    	     marker = 's', linestyle = 'None', 
-					 label = predname[item], color = colores[item], alpha = 0.3)
+				plt.plot(datac['LAT'], datac[agecol[item]+'PRED'], 
+			    	     marker = 's', linestyle = 'None', 
+						 label = predname[item], color = colores[item], alpha = 0.3)
 
 		# Remove -9999 values from the graph (= no data values)	
 		plt.ylim(bottom = agerange[0], top = agerange[1])
@@ -361,18 +372,19 @@ def PlotPecubeForward(datafnme, inputdata,
 		# Loop on the data to plot
 		fig1 = plt.figure()
 		for item in dataplot:
-			if inputdata:
-				plt.errorbar(inputc[agecol[item]], inputc['HEIGHT'], xerr = inputc[errname[item]], 
-			    	         fmt = 'o', label = agename[item], color = colores[item])
-			else:
-				plt.plot(datac[agecol[item]+'OBS'], datac['HEIGHTOBS'], 
-			    	     marker = 'o', linestyle = 'None', 
-						 label = agename[item], color = colores[item])
+			if item != 'TTp':
+				if inputdata:
+					plt.errorbar(inputc[agecol[item]], inputc['HEIGHT'], xerr = inputc[errname[item]], 
+			    		         fmt = 'o', label = agename[item], color = colores[item])
+				else:
+					plt.plot(datac[agecol[item]+'OBS'], datac['HEIGHTOBS'], 
+			    		     marker = 'o', linestyle = 'None', 
+							 label = agename[item], color = colores[item])
 		
-			#plt.plot(datac[agecol[item]+'PRED'], datac['HEIGHTOBS'], 
-			plt.plot(datac[agecol[item]+'PRED'], datac['HEIGHTPRED'], 
-		    	     marker = 's', linestyle = 'None', 
-					 label = predname[item], color = colores[item], alpha = 0.3)
+				#plt.plot(datac[agecol[item]+'PRED'], datac['HEIGHTOBS'], 
+				plt.plot(datac[agecol[item]+'PRED'], datac['HEIGHTPRED'], 
+		    		     marker = 's', linestyle = 'None', 
+						 label = predname[item], color = colores[item], alpha = 0.3)
 
 		# Remove -9999 values from the graph (= no data values)	
 		plt.ylim(bottom = min(min(datac[agecol['alt']+'OBS']), min(datac[agecol['alt']+'PRED']), 0),
@@ -398,17 +410,18 @@ def PlotPecubeForward(datafnme, inputdata,
 		# Loop on the data to plot
 		fig1 = plt.figure()
 		for item in dataplot:
-			if inputdata:
-				plt.errorbar(coordprojinputc, inputc[agecol[item]], yerr = inputc[errname[item]], 
-			    	         fmt = 'o', label = agename[item], color = colores[item])
-			else:
-				plt.plot(coordproj, datac[agecol[item]+'OBS'], 
-			    	     marker = 'o', linestyle = 'None', 
-						 label = agename[item], color = colores[item])
+			if item != 'TTp':
+				if inputdata:
+					plt.errorbar(coordprojinputc, inputc[agecol[item]], yerr = inputc[errname[item]], 
+			    		         fmt = 'o', label = agename[item], color = colores[item])
+				else:
+					plt.plot(coordproj, datac[agecol[item]+'OBS'], 
+			    		     marker = 'o', linestyle = 'None', 
+							 label = agename[item], color = colores[item])
 		
-			plt.plot(coordproj, datac[agecol[item]+'PRED'], 
-		    	     marker = 's', linestyle = 'None', 
-					 label = predname[item], color = colores[item], alpha = 0.3)
+				plt.plot(coordproj, datac[agecol[item]+'PRED'], 
+		    		     marker = 's', linestyle = 'None', 
+						 label = predname[item], color = colores[item], alpha = 0.3)
 
 		# Remove -9999 values from the graph (= no data values)	
 		plt.ylim(bottom = agerange[0], top = agerange[1])
@@ -456,48 +469,154 @@ def PlotPecubeForward(datafnme, inputdata,
 
 	# Do also Age comparisons
 	for item in dataplot:
+		if item != 'TTp':
+			print(u'\tPlotting %s age comparison' %(str(item)))
+			fig2 = plt.figure()
+			plt.gca().set_aspect('equal')
+			# Plot 1:1 line
+			plt.plot([0,8000], [0,8000], marker = 'None', linestyle = '-', 
+					 label = '1:1 line', color = 'lightgrey', alpha = 1)
+			# Plot the age comparison
+			# And add error bars on data
+			if inputdata:
+				plt.errorbar(datac[agecol[item]+'OBS'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)], 
+							 datac[agecol[item]+'PRED'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)],
+							 xerr = inputc[errname[item]][np.logical_not(np.isnan(inputc[errname[item]]))],
+			    	    	 fmt = 'o', label = 'Sample', color = colores[item])
+			else:
+				plt.plot(datac[agecol[item]+'OBS'], datac[agecol[item]+'PRED'], 
+					 		 marker = 'o', linestyle = 'None',
+							 label = 'Sample', 
+							 color = colores[item])
 
-		print(u'\tPlotting %s age comparison' %(str(item)))
-		fig2 = plt.figure()
-		plt.gca().set_aspect('equal')
-		# Plot 1:1 line
-		plt.plot([0,8000], [0,8000], marker = 'None', linestyle = '-', 
-				 label = '1:1 line', color = 'lightgrey', alpha = 1)
-		# Plot the age comparison
-		# And add error bars on data
-		if inputdata:
-			plt.errorbar(datac[agecol[item]+'OBS'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)], 
-						 datac[agecol[item]+'PRED'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)],
-						 xerr = inputc[errname[item]][np.logical_not(np.isnan(inputc[errname[item]]))],
-			    	     fmt = 'o', label = 'Sample', color = colores[item])
-		else:
-			plt.plot(datac[agecol[item]+'OBS'], datac[agecol[item]+'PRED'], 
-				 		 marker = 'o', linestyle = 'None',
-						 label = 'Sample', 
-						 color = colores[item])
+			# Write the 1:1 text over the line
+			plt.text((max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2,
+					 (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2 - 
+					      (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/20,
+				 	'1:1', rotation = 45, color = 'lightgrey', alpha = 1, ha = 'center', va = 'center')
 
-		# Write the 1:1 text over the line
-		plt.text((max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2,
-				 (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2 - 
-				      (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/20,
-				 '1:1', rotation = 45, color = 'lightgrey', alpha = 1, ha = 'center', va = 'center')
-
-		plt.ylim(bottom = min(min(abs(datac[agecol[item]+'OBS'])), 
-					 		  min(abs(datac[agecol[item]+'PRED']))), 
-	    	     top = max(max(datac[agecol[item]+'OBS']), 
-				 		   max(datac[agecol[item]+'PRED'])))
-		plt.xlim(left = min(min(abs(datac[agecol[item]+'OBS'])), 
+			plt.ylim(bottom = min(min(abs(datac[agecol[item]+'OBS'])), 
+						 		  min(abs(datac[agecol[item]+'PRED']))), 
+	    	    	 top = max(max(datac[agecol[item]+'OBS']), 
+				 			   max(datac[agecol[item]+'PRED'])))
+			plt.xlim(left = min(min(abs(datac[agecol[item]+'OBS'])), 
 							min(abs(datac[agecol[item]+'PRED']))), 
 				 right = max(max(datac[agecol[item]+'OBS']), 
 				 			 max(datac[agecol[item]+'PRED'])))
 
-		plt.xlabel(u'%s Observed (Ma)' %(str(item)))
-		plt.ylabel(u'%s Predicted (Ma)' %(str(item)))
-		plt.legend(loc = 'best')
-		plt.title(graphtitle)
+			plt.xlabel(u'%s Observed (Ma)' %(str(item)))
+			plt.ylabel(u'%s Predicted (Ma)' %(str(item)))
+			plt.legend(loc = 'best')
+			plt.title(graphtitle)
 
-		plt.savefig(graphpath + '/' + graphtitle +'_Compare_' +str(item) + '.pdf')
-		fig2.clear()
+			plt.savefig(graphpath + '/' + graphtitle +'_Compare_' +str(item) + '.pdf')
+			fig2.clear()
+
+	# Check if input and output PTt path files are present
+	if (inputdataPTt and outputdataPTt) and (not os.path.isfile(inputdataPTt) or not os.path.isfile(outputdataPTt)):
+		print(u'\n \033[91mWarning:\033[00m No %s and/or %s file, I am skipping the plot of the error bars...\n' % (inputdataPTt, outputdataPTt))
+		inputdataPTt = None
+		outputdataPTt = None
+	if inputdataPTt and outputdataPTt and ('TTp' in dataplot):
+		print('\tPlotting PTt paths')
+		# Read the inputdataPTt (.csv) file
+		inputPTt = np.genfromtxt(fname = inputdataPTt, delimiter = ',', names = True)
+		# Read the Predicion PT-t (.csv) file
+		# PROBLEM TO READ THE OUTPUT FILE COMPARE-TT.CSV if not worked in a text editor ?
+		# Clean it:
+		with open(outputdataPTt, 'r') as f1:
+			with open(outputdataPTt + 'touched', 'w') as f2:
+				lines = f1.readlines()
+				changes = False
+				for k in range (0, len(lines)-1):
+					if lines[k] != '':
+						# Remove the ',' at the eand of the line if there is one
+						if lines[k][-2] == ',' :
+							if lines[k][-1] != ',' :
+								lines[k] = lines[k][0:-2]+lines[k][-1]
+								changes = True
+						# merge line k and line k+1 if lat/long not followed by data
+						if len(lines[k].split(',')) == 2 and lines[k+1].split(',')[0] == '' and lines[k+1].split(',')[1] == '':
+							lines[k] = lines[k].rstrip('\n') + lines[k+1][1:]
+							lines[k+1] = ''
+							changes = True
+				if changes:
+					# Write the lines a new file, but not the empty lines
+					for line in lines:
+						if line.strip('\n') != '':
+							f2.write(line)
+					# update the name of the output PTt file with the corrected file
+					outputdataPTt = outputdataPTt + 'touched'
+					print('\t\033[91mWarning:\033[00m Predicted input file modified to %s to be plotted' %(outputdataPTt))
+
+		# Read the cleaned Predicion PT-t (.csv) file
+		outputPTt = np.genfromtxt(fname = outputdataPTt, delimiter = ',', names = True)
+
+		# Find number of samples in the input file
+		nPTtsamples = max(inputPTt[np.isnan(inputPTt['LAT']) == False].shape[0],
+		    				inputPTt[np.isnan(inputPTt['LON']) == False].shape[0],
+							inputPTt[np.isnan(inputPTt['HEIGHT']) == False].shape[0],
+							inputPTt[np.isnan(inputPTt['SAMPLE']) == False].shape[0])
+		# Find indexes of sample names/beginning
+		indexPTt = np.where(np.isnan(inputPTt['LAT']) == False)[0]
+
+		if nPTtsamples > 0:
+			fig3 = plt.figure()
+			# For each sample with PT-t, 
+			for k in range (0, nPTtsamples):
+				#	Extract the PTt path from the file
+				if k == (nPTtsamples-1):
+					ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:]
+					pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:]
+				else:
+					ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:indexPTt[k + 1]]
+					pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:indexPTt[k + 1]]
+				# Plot the enveloppe deduced from the error bars on T
+				plt.fill_between(x = ppt['TIMEH'], 
+        		                 y1 = ppt['TEMPH'] + ppt['DTEMPH'],
+        		                 y2 = ppt['TEMPH'] - ppt['DTEMPH'],
+        		                 alpha=0.20, 
+        		                 color='lightblue', 
+        		                 interpolate=True,
+        		                 label = 'Acceptable paths')
+				# plot the max enveloppe
+				plt.plot(ppt['TIMEH'],
+				         ppt['TEMPH'] + ppt['DTEMPH'],
+						 marker = 'None', linestyle = '-', 
+					 	 color = 'lightblue', alpha = 1,
+						 label = 'min-max')
+				# Plot the min enveloppe
+				plt.plot(ppt['TIMEH'],
+				         ppt['TEMPH'] - ppt['DTEMPH'],
+						 marker = 'None', linestyle = '-', 
+					 	 color = 'lightblue', alpha = 1)
+				# 	Plot the mean PT-t path
+				plt.plot(ppt['TIMEH'],
+				         ppt['TEMPH'],
+						 marker = 'None', linestyle = '-', 
+					 	 color = 'blue', alpha = 1,
+						 label = 'mean')
+				#	Plot the prediction
+				plt.plot(pptOut['TIME'],
+				         pptOut['TEMPPRED'],
+						 marker = 'None', linestyle = '-', 
+					 	 color = 'green', alpha = 1,
+						 label = 'predictions')
+
+				#	Save the graph
+				plt.xlabel(u'Time before present (Ma)')
+				plt.ylabel(u'Temperature (Ma)')
+				plt.legend(loc = 'best')
+				plt.title(graphtitle)
+				# Invert x- and y-axis
+				plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
+						  max(ppt['TEMPH'] + ppt['DTEMPH']), min(ppt['TEMPH'] - ppt['DTEMPH'])])
+				plt.savefig(graphpath + '/' + graphtitle +'_ttpath_sample' + str(k+1) + '.pdf')
+				fig3.clear()
+		else:
+			print('\033[91mWarning:\033[00m No PT-t paths to plot...')	
+	else:
+		print('\033[91mWarning:\033[00m No PT-t paths to plot...')
 
 
 	print('\n###########################################################################\n')
@@ -525,6 +644,8 @@ if __name__ == "__main__":
 	#	inputdata: input data declared in Pecube.in; This is used to plot the errorbars
 	datafnme = '../Tests/Forward/Data/CompareAGE.csv'
 	inputdata = '../Tests/Forward/Data/Trujillo.csv'
+	inputdataPTt = '../Tests/Forward/Data/TrujilloPTt.csv'
+	outputdataPTt = '../Tests/Forward/Data/TimeTemperaturePaths.csv'
 
 	# graphtitle: title to write on the graph
 	graphtitle = 'Trujillo transect'
@@ -558,6 +679,8 @@ if __name__ == "__main__":
 					  graphpath = graphpath,
 					  datafnme = datafnme,
 					  inputdata = inputdata,
+					  inputdataPTt = inputdataPTt,
+					  outputdataPTt = outputdataPTt,
 					  graphtitle = graphtitle,
 					  agerange = agerange,
 					  profiletype = profiletype,

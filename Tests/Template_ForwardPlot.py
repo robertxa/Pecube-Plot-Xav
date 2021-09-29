@@ -18,6 +18,8 @@ graphpath = '../Tests/Forward/Graphs'
 #	inputdata: input data declared in Pecube.in; This is used to plot the errorbars
 datafnme = '../Tests/Forward/Data/CompareAGE.csv'
 inputdata = '../Tests/Forward/Data/Trujillo.csv'
+inputdataPTt = None
+outputdataPTt = None
 
 # graphtitle: title to write on the graph
 graphtitle = 'Trujillo transect'
@@ -50,6 +52,8 @@ Fplot.PlotPecubeForward(dataplot = dataplot,
 				  graphpath = graphpath,
 				  datafnme = datafnme,
 				  inputdata = inputdata,
+				  inputdataPTt = inputdataPTt,
+				  outputdataPTt = outputdataPTt,
 				  graphtitle = graphtitle,
 				  agerange = agerange,
 				  profiletype = profiletype,
