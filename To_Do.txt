@@ -1,7 +1,6 @@
 TO DO:
     - Implement MTL forward plots
     - Implement MTL inverse plots
-    - Implement small letters in table headers (in fact, we need to do as if they are somme cap. letters or not)
 
 BUGS FOUNDS/TO BE CORRECTED:
     - 

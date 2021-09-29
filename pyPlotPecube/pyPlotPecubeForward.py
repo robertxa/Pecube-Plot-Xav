@@ -42,65 +42,73 @@ def dict_pecube():
 	#         needs to be changed depending on your settings in the last paragraph 
 	#         of the file topo_parameters.txt
 	agecol = {'alt' : 'HEIGHT',
-    	      'AHe' : 'AHE',
+    	      'AHE' : 'AHE',
         	  'AFT' : 'AFT',
-			  'ZHe' : 'ZHE',
+			  'ZHE' : 'ZHE',
         	  'ZFT' : 'ZFT',
-	          'KAr' : 'KAR',
-    	      'BAr' : 'BAR',
-        	  'MAr' : 'MAR',
-	          'HbAr' : 'HAR',
+	          'KAR' : 'KAR',
+    	      'BAR' : 'BAR',
+        	  'MAR' : 'MAR',
+	          'HBAR' : 'HAR',
     	      'FTL' : 'FT'
         	  }
 
 	# errname: respective column number of the error on data in the data input file 
-	errname = {'AHe' : 'DAHE',
+	errname = {'AHE' : 'DAHE',
 			   'AFT' : 'DAFT',
-			   'ZHe' : 'DZHE',
+			   'ZHE' : 'DZHE',
 			   'ZFT' : 'DZFT',
-			   'KAr' : 'DKAR',
-        	   'BAr' : 'DBAR',
-	           'MAr' : 'DMAR',
-    	       'HbAr' : 'DHAR'
+			   'KAR' : 'DKAR',
+        	   'BAR' : 'DBAR',
+	           'MAR' : 'DMAR',
+    	       'HBAR' : 'DHAR'
 			   }
 
 	# agename: legend of each data system         
-	agename = {'AHe' : 'AHe (Ma)',
+	agename = {'AHE' : 'AHe (Ma)',
     	       'AFT' : 'AFT (Ma)',
-        	   'ZHe' : 'ZHe (Ma)',
+        	   'ZHE' : 'ZHe (Ma)',
 	           'ZFT' : 'ZFT (Ma)',
-    	       'KAr' : 'KAr (Ma)',
-        	   'BAr' : 'Biot. Ar (Ma)',
-	           'MAr' : 'Musc. Ar (Ma)',
-    	       'HbAr' : 'Hb Ar (Ma)',
-        	   'FTL' : 'FT length (µm)'
+    	       'KAR' : 'KAr (Ma)',
+        	   'BAR' : 'Biot. Ar (Ma)',
+	           'MAR' : 'Musc. Ar (Ma)',
+    	       'HBAR' : 'Hb Ar (Ma)',
+        	   'FTL' : 'FT length (µm)',
+			   'alt' : 'elevation (m)'
 	           }
 
 	# predname: legend of each predicted system         
-	predname = {'AHe' : 'Predicted AHe (Ma)',
+	predname = {'AHE' : 'Predicted AHe (Ma)',
     	        'AFT' : 'Predicted AFT (Ma)',
-        	    'ZHe' : 'Predicted ZHe (Ma)',
+        	    'ZHE' : 'Predicted ZHe (Ma)',
 	            'ZFT' : 'Predicted ZFT (Ma)',
-    	        'KAr' : 'Predicted KAr (Ma)',
-        	    'BAr' : 'Predicted Biot. Ar (Ma)',
-	            'MAr' : 'Predicted Musc. Ar (Ma)',
-    	        'HbAr' : 'Predicted Hb Ar (Ma)',
-        	    'FTL' : 'Predicted FT length (µm)'
+    	        'KAR' : 'Predicted KAr (Ma)',
+        	    'BAR' : 'Predicted Biot. Ar (Ma)',
+	            'MAR' : 'Predicted Musc. Ar (Ma)',
+    	        'HBAR' : 'Predicted Hb Ar (Ma)',
+        	    'FTL' : 'Predicted FT length (µm)',
+				'alt' : 'Predicted elevation (m)'
 	           }
 
 	# colores: Colors used for the different age system
-	colores = {'AHe' : 'y',
+	colores = {'AHE' : 'y',
     	       'AFT' : 'r',
-        	   'ZHe' : 'g',
+        	   'ZHE' : 'g',
 	           'ZFT' : 'b',
-    	       'KAr' : 'k',
-        	   'BAr' : 'c',
-	           'MAr' : 'm',
-    	       'HbAr' : '0.75',
-        	   'FTL' : 'y'
+    	       'KAR' : 'k',
+        	   'BAR' : 'c',
+	           'MAR' : 'm',
+    	       'HBAR' : '0.75',
+        	   'FTL' : 'y',
+			   'alt' : 'y'
 	           }
-			   
-	return agecol, errname, agename, predname, colores
+	
+	profdict = {'Latitude'  : 'LAT', 
+	            'Longitude' : 'LON', 
+				'Altitude'  : 'HEIGHT', 
+				'Projected' : 'PROJ'}
+
+	return agecol, errname, agename, predname, colores, profdict
 
 
 #################################################
@@ -177,6 +185,377 @@ def project(A, B, datac):
 
 
 #################################################
+def plotTransect(inputdata, profiletype, dataplot,
+                 datac, inputc = None, coordproj = None, coordprojinputc = None,
+				 agerange = [0, 100],
+				 agecol = None, errname = None, colores = None,
+				 predname = None, agename = None, profdict = None,
+				 graphpath = 'Graphs', graphtitle = None):
+	"""
+
+	Args:
+		inputdata (string): input data declared in Pecube.in; This is used to plot the errorbars
+
+		profiletype (list, optional): type of profile = ['Latitude', 'Longitude', 'Altitude', 'Projected']
+						              If [], no age profile is plotted.
+
+		dataplot (list): List of data to plot ; By default, the altitude will be plotted
+						 ['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']
+						 Rem: For the moment, MTL and TTp not implemented.
+
+		datac (string): results of Pecube forward modeling
+
+		inputc (array, optional): Array of data to plot.
+		                          Defaults to None.
+
+		coordproj (array, optional): Predictions projected along A-B.
+		                             Defaults to None.
+		
+		coordprojinputc (array, optional): Observations projected along A-B.
+		                                   Defaults to None.
+
+		agerange (2*1 array of floats, optional): range of the ages to plot on the profiles
+												  [min, max]. Defaults to None.
+
+		agecol (dict, optional): respective column number of the data in the file comparison.txt.
+		                         Defaults to None.
+		
+		errname (dict, optional): respective column number of the error on data in the data input file. 
+		                          Defaults to None.
+		
+		colores (dict, optional): Colors used for the different age system. 
+		                          Defaults to None.
+				
+		predname (dict, optional): legend of each predicted system. 
+		                           Defaults to None.
+
+		agename (dict, optional): legend of each data system. 
+		                          Defaults to None.
+
+		profdict (dict, optional): Columns of profile types. 
+		                           Defaults to None.
+
+		graphpath (str, optional): name of the folder where the plot will be written
+						            Usually you do not have to change it. 
+									Defaults to 'Graphs'.
+
+		graphtitle (str, optional): title to write on the graph.
+		                            Defaults to None.
+
+	"""
+
+	# Dictionnary to build axis' legends
+	profname = {'Latitude'  : 'Latitude (°)', 
+	            'Longitude' : 'Longitude (°)', 
+				'Altitude'  : 'Elevation (m)', 
+				'Projected' : 'Distance along profile (km)'}
+
+	fig1 = plt.figure()
+	for profile in profiletype:
+		print(u'\tPlotting %s transect' %(profile))
+		for item in dataplot:
+			if item.casefold() != 'TTp'.casefold() and item.upper() != 'MTL':
+				item = item.upper()
+				if inputdata:
+					# Plot input data with Error bars
+					if profile != 'Projected' and profile != 'Altitude':
+						plt.errorbar(inputc[profdict[profile]], inputc[agecol[item]], yerr = inputc[errname[item]], 
+			    			         fmt = 'o', label = agename[item], color = colores[item])
+					elif profile == 'Altitude':
+						plt.errorbar(inputc[agecol[item]], inputc['HEIGHT'], xerr = inputc[errname[item]], 
+			    		         fmt = 'o', label = agename[item], color = colores[item])
+					else:
+						plt.errorbar(coordprojinputc, inputc[agecol[item]], yerr = inputc[errname[item]], 
+			    		         fmt = 'o', label = agename[item], color = colores[item])
+				else:
+					# Plot input data with NO error bars
+					if profile != 'Projected' and profile != 'Altitude':
+						plt.plot(datac[profdict[profile]], datac[agecol[item]+'OBS'], 
+			    			     marker = 'o', linestyle = 'None', 
+								 label = agename[item], color = colores[item])
+					elif profile == 'Altitude':
+						plt.plot(datac[agecol[item]+'OBS'], datac['HEIGHTOBS'], 
+			    			     marker = 'o', linestyle = 'None', 
+								 label = agename[item], color = colores[item])
+					else:
+						plt.plot(coordproj, datac[agecol[item]+'OBS'], 
+			    			     marker = 'o', linestyle = 'None', 
+								 label = agename[item], color = colores[item])
+				# Plot predictions
+				if profile != 'Projected' and profile != 'Altitude':
+					plt.plot(datac[profdict[profile]], datac[agecol[item]+'PRED'], 
+		    			     marker = 's', linestyle = 'None', 
+							 label = predname[item], color = colores[item], alpha = 0.3)
+				elif profile == 'Altitude':
+					plt.plot(datac[agecol[item]+'PRED'], datac['HEIGHTPRED'], 
+		    	    		 marker = 's', linestyle = 'None',
+							 label = predname[item], color = colores[item], alpha = 0.3)	
+				else:
+					plt.plot(coordproj, datac[agecol[item]+'PRED'], 
+		    			     marker = 's', linestyle = 'None', 
+							 label = predname[item], color = colores[item], alpha = 0.3)
+
+		# Remove -9999 values from the graph (= no data values)	
+		if profile != 'Altitude':
+			plt.ylim(bottom = agerange[0], top = agerange[1])
+		else:
+			plt.ylim(bottom = min(min(datac[agecol['alt']+'OBS']), min(datac[agecol['alt']+'PRED']), 0),
+		 		        top = max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED'])))
+			plt.xlim(left = agerange[0], right = agerange[1])
+
+		# set legend
+		plt.legend(loc = 'best')
+		#plt.xlabel(u'Longitude (°)')
+		if profile != 'Altitude':
+			plt.xlabel(profname[profile])
+			plt.ylabel(u'Age (Ma)')
+		else:
+			plt.ylabel(profname[profile])
+			plt.xlabel(u'Age (Ma)')
+		plt.title(graphtitle)
+
+		plt.savefig(graphpath + '/profile/' + graphtitle +'_' + profile + '.pdf')
+		fig1.clear()
+
+	return
+
+
+#################################################
+def plotComparisons(inputdata, dataplot,
+                    datac, inputc = None,
+					agecol = None, errname = None, colores = None, agename = None,
+					graphpath = 'Graphs', graphtitle = None):
+	"""
+	Function to plot the comparison between data and predictions
+
+	Args:
+		inputdata (string): input data declared in Pecube.in; This is used to plot the errorbars
+
+		dataplot (list): List of data to plot ; By default, the altitude will be plotted
+						 ['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']
+						 Rem: For the moment, MTL and TTp not implemented.
+						 Defaults to ['AHe','AFT'].
+
+		datac (string): results of Pecube forward modeling
+
+		inputc (array, optional): Array of data to plot.
+		                          Defaults to None.
+
+		agecol (dict, optional): respective column number of the data in the file comparison.txt.
+		                         Defaults to None.
+		
+		errname (dict, optional): respective column number of the error on data in the data input file. 
+		                          Defaults to None.
+		
+		colores (dict, optional): Colors used for the different age system. 
+		                          Defaults to None.
+		
+		agename (dict, optional): legend of each data system. 
+		                          Defaults to None.
+
+		graphpath (str, optional): name of the folder where the plot will be written
+						           Usually you do not have to change it. 
+								   Defaults to 'Graphs'.
+
+		graphtitle (str, optional): title to write on the graph. 
+		                            Defaults to None.
+
+	"""
+
+	for item in dataplot:
+		if item.casefold() != 'TTp'.casefold() and item.upper() != 'MTL':
+			if item == 'Altitude':
+				inputdata = None
+				print(u'\tPlotting %s comparison' %(str(item)))
+				item = 'alt'
+			else:
+				item = item.upper()
+				print(u'\tPlotting %s age comparison' %(str(item)))
+			fig2 = plt.figure()
+			plt.gca().set_aspect('equal')
+			# Plot 1:1 line
+			plt.plot([0,8000], [0,8000], marker = 'None', linestyle = '-', 
+					 label = '1:1 line', color = 'lightgrey', alpha = 1)
+			# Plot the age comparison
+			# And add error bars on data
+			if inputdata:
+				plt.errorbar(datac[agecol[item]+'OBS'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)], 
+							 datac[agecol[item]+'PRED'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)],
+							 xerr = inputc[errname[item]][np.logical_not(np.isnan(inputc[errname[item]]))],
+			    	    	 fmt = 'o', label = 'Sample', color = colores[item])
+			else:
+				plt.plot(datac[agecol[item]+'OBS'], datac[agecol[item]+'PRED'], 
+					 		 marker = 'o', linestyle = 'None',
+							 label = 'Sample', 
+							 color = colores[item])
+
+			# Write the 1:1 text over the line
+			# We may need to revise the way to find the x/y
+			plt.text((max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2,
+					 (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2 - 
+					      (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/20,
+				 	'1:1', rotation = 45, color = 'lightgrey', alpha = 1, ha = 'center', va = 'center')
+
+			plt.ylim(bottom = min(min(abs(datac[agecol[item]+'OBS'])), 
+						 		  min(abs(datac[agecol[item]+'PRED']))), 
+	    	    	 top = max(max(datac[agecol[item]+'OBS']), 
+				 			   max(datac[agecol[item]+'PRED'])))
+			#plt.ylim(bottom = min(min(datac[agecol['alt']+'OBS']), min(datac[agecol['alt']+'PRED']), 0), 
+	        # top = max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED'])))
+			plt.xlim(left = min(min(abs(datac[agecol[item]+'OBS'])), 
+							min(abs(datac[agecol[item]+'PRED']))), 
+				 right = max(max(datac[agecol[item]+'OBS']), 
+				 			 max(datac[agecol[item]+'PRED'])))
+			#plt.xlim(left = min(min(datac[agecol['alt']+'OBS']), min(datac[agecol['alt']+'PRED']), 0), 
+			# right = max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED'])))
+
+			#plt.xlabel(u'%s Observed (Ma)' %(str(item)))
+			#plt.ylabel(u'%s Predicted (Ma)' %(str(item)))
+			plt.xlabel(u'Observed %s' %(str(agename[item])))
+			plt.ylabel(u'Predicted %s' %(str(agename[item])))
+			plt.legend(loc = 'best')
+			plt.title(graphtitle)
+
+			plt.savefig(graphpath + '/Compare/' + graphtitle +'_Compare_' +str(item) + '.pdf')
+			fig2.clear()
+
+	return
+
+#################################################
+def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None):
+	"""
+	Function to plot Time-Temperature paths
+
+	Args:
+		inputdataPTt (str): path and name of the input TTp file
+		outputdataPTt (str): path and name of the output TTpfile.
+		                     Generally, this is 'output/CompareTT.csv'
+		graphpath (str, optional): Path to the graphs folder.
+		                           Defaults to 'Graphs'.
+		graphtitle (str, optional): Title of the graph.
+		                            Defaults to None.
+	"""
+
+	# Read the inputdataPTt (.csv) file
+	inputPTt = np.genfromtxt(fname = inputdataPTt, delimiter = ',', names = True, case_sensitive = 'upper')
+	# Read the Predicion PT-t (.csv) file
+	# PROBLEM TO READ THE OUTPUT FILE COMPARE-TT.CSV if not worked in a text editor ?
+	# Clean it:
+	with open(outputdataPTt, 'r') as f1:
+		with open(outputdataPTt + 'touched', 'w') as f2:
+			lines = f1.readlines()
+			changes = False
+			for k in range (0, len(lines)-1):
+				if lines[k] != '':
+					# Remove the ',' at the eand of the line if there is one
+					if lines[k][-2] == ',' :
+						if lines[k][-1] != ',' :
+							lines[k] = lines[k][0:-2]+lines[k][-1]
+							changes = True
+					# merge line k and line k+1 if lat/long not followed by data
+					if len(lines[k].split(',')) == 2 and lines[k+1].split(',')[0] == '' and lines[k+1].split(',')[1] == '':
+						lines[k] = lines[k].rstrip('\n') + lines[k+1][1:]
+						lines[k+1] = ''
+						changes = True
+			if changes:
+				# Write the lines a new file, but not the empty lines
+				for line in lines:
+					if line.strip('\n') != '':
+						f2.write(line)
+				# update the name of the output PTt file with the corrected file
+				outputdataPTt = outputdataPTt + 'touched'
+				print('\t\033[91mWarning:\033[00m Predicted input file modified to %s to be plotted' %(outputdataPTt))
+
+	# Read the cleaned Predicion PT-t (.csv) file
+	outputPTt = np.genfromtxt(fname = outputdataPTt, delimiter = ',', names = True, case_sensitive = 'upper')
+
+	# Find number of samples in the input file
+	nPTtsamples = max(inputPTt[np.isnan(inputPTt['LAT']) == False].shape[0],
+	    				inputPTt[np.isnan(inputPTt['LON']) == False].shape[0],
+						inputPTt[np.isnan(inputPTt['HEIGHT']) == False].shape[0],
+						inputPTt[np.isnan(inputPTt['SAMPLE']) == False].shape[0])
+	# Find indexes of sample names/beginning
+	indexPTt = np.where(np.isnan(inputPTt['LAT']) == False)[0]
+	
+	if nPTtsamples > 0:
+		fig3 = plt.figure()
+		# For each sample with PT-t, 
+		for k in range (0, nPTtsamples):
+			#	Extract the PTt path from the file
+			if k == (nPTtsamples-1):
+				ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:]
+				pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:]
+			else:
+				ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:indexPTt[k + 1]]
+				pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:indexPTt[k + 1]]
+			# Plot the enveloppe deduced from the error bars on T
+			plt.fill_between(x = ppt['TIMEH'], 
+    		                 y1 = ppt['TEMPH'] + ppt['DTEMPH'],
+    		                 y2 = ppt['TEMPH'] - ppt['DTEMPH'],
+    		                 alpha=0.20, 
+    		                 color='lightblue', 
+    		                 interpolate=True,
+    		                 label = 'Acceptable paths')
+			# plot the max enveloppe
+			plt.plot(ppt['TIMEH'],
+			         ppt['TEMPH'] + ppt['DTEMPH'],
+					 marker = 'None', linestyle = '-', 
+				 	 color = 'lightblue', alpha = 1,
+					 label = 'Min-Max')
+			# Plot the min enveloppe
+			plt.plot(ppt['TIMEH'],
+			         ppt['TEMPH'] - ppt['DTEMPH'],
+					 marker = 'None', linestyle = '-', 
+				 	 color = 'lightblue', alpha = 1)
+			# 	Plot the mean PT-t path
+			plt.plot(ppt['TIMEH'],
+			         ppt['TEMPH'],
+					 marker = 'None', linestyle = '-', 
+				 	 color = 'blue', alpha = 1,
+					 label = 'Mean')
+			#	Plot the prediction
+			plt.plot(pptOut['TIME'],
+			         pptOut['TEMPPRED'],
+					 marker = 'None', linestyle = '-', 
+				 	 color = 'green', alpha = 1,
+					 label = 'Predictions')
+
+			#	Save the graph
+			plt.xlabel(u'Time before present (Ma)')
+			plt.ylabel(u'Temperature (Ma)')
+			plt.legend(loc = 'best')
+			plt.title(graphtitle)
+			# Invert x- and y-axis
+			plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
+					  max(ppt['TEMPH'] + ppt['DTEMPH']), min(ppt['TEMPH'] - ppt['DTEMPH'])])
+			plt.savefig(graphpath + '/TTpaths/' + graphtitle +'_ttpath_sample' + str(k+1) + '.pdf')
+			fig3.clear()
+	else:
+		print('\033[91mWarning:\033[00m No PT-t paths to plot...')	
+
+	return
+
+
+#################################################
+def plotMTL():
+
+	print('\t\033[91mWarning:\033[00m MTL not implemented for now...')	
+	
+	# TO DO
+
+	# Read input file
+
+	# Read Output file
+
+	# Find number of sample with MTL
+	# For each sample with MTL,
+	#	Build input histogram
+	#	Build output histogram
+	#	Save the graph
+
+	return
+
+#################################################
 ################# Main code #####################
 def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = None,
 					  dataplot = ['AHe','AFT'],
@@ -227,41 +606,42 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 		
 		agename (dict, optional): legend of each data system         
 								  If None, this is set to
-									{'AHe' : 'AHe (Ma)',
+									{'AHE' : 'AHe (Ma)',
 									'AFT' : 'AFT (Ma)',
-									'ZHe' : 'ZHe (Ma)',
+									'ZHE' : 'ZHe (Ma)',
 									'ZFT' : 'ZFT (Ma)',
-									'KAr' : 'KAr (Ma)',
-									'BAr' : 'Biot. Ar (Ma)',
-									'MAr' : 'Musc. Ar (Ma)',
-									'HbAr' : 'Hb Ar (Ma)',
+									'KAR' : 'KAr (Ma)',
+									'BAR' : 'Biot. Ar (Ma)',
+									'MAR' : 'Musc. Ar (Ma)',
+									'HBAR' : 'Hb Ar (Ma)',
 									'FTL' : 'FT length (µm)'}
 								  Default = None. 
 
 		predname (dict, optional): legend of each predicted system.
 								   If None, this is set to
-									{'AHe' : 'Predicted AHe (Ma)',
+									{'AHE' : 'Predicted AHe (Ma)',
 									'AFT' : 'Predicted AFT (Ma)',
-									'ZHe' : 'Predicted ZHe (Ma)',
+									'ZHE' : 'Predicted ZHe (Ma)',
 									'ZFT' : 'Predicted ZFT (Ma)',
-									'KAr' : 'Predicted KAr (Ma)',
-									'BAr' : 'Predicted Biot. Ar (Ma)',
-									'MAr' : 'Predicted Musc. Ar (Ma)',
-									'HbAr' : 'Predicted Hb Ar (Ma)',
+									'KAR' : 'Predicted KAr (Ma)',
+									'BAR' : 'Predicted Biot. Ar (Ma)',
+									'MAR' : 'Predicted Musc. Ar (Ma)',
+									'HBAR' : 'Predicted Hb Ar (Ma)',
 									'FTL' : 'Predicted FT length (µm)'}         
 								   Default = None. 
 								   
 		colores (dict, optional): Colors used for the different age system
 								  If None, this is set to
-									{'AHe' : 'y',
+									{'AHE' : 'y',
 									'AFT' : 'r',
-									'ZHe' : 'g',
+									'ZHE' : 'g',
 									'ZFT' : 'b',
-									'KAr' : 'k',
-									'BAr' : 'c',
-									'MAr' : 'm',
-									'HbAr' : '0.75',
-									'FTL' : 'y'}
+									'KAR' : 'k',
+									'BAR' : 'c',
+									'MAR' : 'm',
+									'HBAR' : '0.75',
+									'FTL' : 'y',
+									'alt' : 'y'}
 								  Default = None.
 
 	Raises:
@@ -288,336 +668,88 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 		print(u'\033[91mWarning:\033[00m Folder %s/ already exists, I will write in it and erase previous pdf files' %(str(graphpath)))
 	
 	# Read data files
-	datac = np.genfromtxt(fname = datafnme, delimiter = ',', names = True)
-	if inputdata: inputc = np.genfromtxt(fname = inputdata, delimiter = ',', names = True)
+	datac = np.genfromtxt(fname = datafnme, delimiter = ',', names = True, case_sensitive = 'upper')
+	if inputdata: inputc = np.genfromtxt(fname = inputdata, delimiter = ',', names = True, case_sensitive = 'upper')
 
 	# Read dictionnaries
 	if not agename:
 		if not predname:
 			if not colores:
-				agecol, errname, agename, predname, colores =  dict_pecube()
+				agecol, errname, agename, predname, colores, profdict =  dict_pecube()
 			else:
-				agecol, errname, agename, predname, junk =  dict_pecube()
+				agecol, errname, agename, predname, junk, profdict =  dict_pecube()
 		else:
-			agecol, errname, agename, junk1, junk =  dict_pecube()
+			agecol, errname, agename, junk1, junk, profdict =  dict_pecube()
 	else:
-		agecol, errname, junk2, junk1, junk =  dict_pecube()
+		agecol, errname, junk2, junk1, junk, profdict =  dict_pecube()
 
+	# Plot profiles
+	if profiletype:
+		if os.path.exists(graphpath + '/Profile') == False:
+			os.mkdir(graphpath + '/Profile')
+		coordproj = None
+		coordprojinputc = None
+		if 'Projected' in profiletype and A and B:
+			# plot Projected transect
+			# Compute projected coordinates
+			coordproj = project(A, B, datac)
+			if inputdata: coordprojinputc = project(A, B, inputc)
+		else:
+			print(u'\t\033[91mWarning:\033[00m No points given to project along a profile, I am skipping it...')
+			profiletype.remove('Projected')
 
-	if 'Longitude' in profiletype:
-		print(u'\tPlotting longitudinal transect')
-		# plot longitude transect
-		# Loop on the data to plot
-		fig1 = plt.figure()
-		for item in dataplot:
-			if item != 'TTp':
-				if inputdata:
-					plt.errorbar(inputc['LON'], inputc[agecol[item]], yerr = inputc[errname[item]], 
-			    		         fmt = 'o', label = agename[item], color = colores[item])
-				else:
-					plt.plot(datac['LON'], datac[agecol[item]+'OBS'], 
-			    		     marker = 'o', linestyle = 'None', 
-							 label = agename[item], color = colores[item])
-		
-				plt.plot(datac['LON'], datac[agecol[item]+'PRED'], 
-		    		     marker = 's', linestyle = 'None', 
-						 label = predname[item], color = colores[item], alpha = 0.3)
-
-		# Remove -9999 values from the graph (= no data values)	
-		plt.ylim(bottom = agerange[0], top = agerange[1])
-	
-		# set legend
-		plt.legend(loc = 'best')
-		plt.xlabel(u'Longitude (°)')
-		plt.ylabel(u'Age (Ma)')
-		plt.title(graphtitle)
-
-		plt.savefig(graphpath + '/' + graphtitle +'_long.pdf')
-		fig1.clear()
-
-	if 'Latitude' in profiletype:
-		print(u'\tPlotting latitudinal transect')
-		# plot latitude transect
-		# Loop on the data to plot
-		fig1 = plt.figure()
-		for item in dataplot:
-			if item != 'TTp':
-				if inputdata:
-					plt.errorbar(inputc['LAT'], inputc[agecol[item]], yerr = inputc[errname[item]], 
-			    		         fmt = 'o', label = agename[item], color = colores[item])
-				else:
-					plt.plot(datac['LAT'], datac[agecol[item]+'OBS'], 
-			    		     marker = 'o', linestyle = 'None', 
-							 label = agename[item], color = colores[item])
-		
-				plt.plot(datac['LAT'], datac[agecol[item]+'PRED'], 
-			    	     marker = 's', linestyle = 'None', 
-						 label = predname[item], color = colores[item], alpha = 0.3)
-
-		# Remove -9999 values from the graph (= no data values)	
-		plt.ylim(bottom = agerange[0], top = agerange[1])
-	
-		# set legend
-		plt.legend(loc = 'best')
-		plt.xlabel(u'Latitude (°)')
-		plt.ylabel(u'Age (Ma)')
-		plt.title(graphtitle)
-
-		plt.savefig(graphpath + '/' + graphtitle +'_lat.pdf')
-		fig1.clear()
-
-	if 'Altitude' in profiletype:
-		print(u'\tPlotting Age-Elevation transect')
-		# plot Altitude transect
-		# Loop on the data to plot
-		fig1 = plt.figure()
-		for item in dataplot:
-			if item != 'TTp':
-				if inputdata:
-					plt.errorbar(inputc[agecol[item]], inputc['HEIGHT'], xerr = inputc[errname[item]], 
-			    		         fmt = 'o', label = agename[item], color = colores[item])
-				else:
-					plt.plot(datac[agecol[item]+'OBS'], datac['HEIGHTOBS'], 
-			    		     marker = 'o', linestyle = 'None', 
-							 label = agename[item], color = colores[item])
-		
-				#plt.plot(datac[agecol[item]+'PRED'], datac['HEIGHTOBS'], 
-				plt.plot(datac[agecol[item]+'PRED'], datac['HEIGHTPRED'], 
-		    		     marker = 's', linestyle = 'None', 
-						 label = predname[item], color = colores[item], alpha = 0.3)
-
-		# Remove -9999 values from the graph (= no data values)	
-		plt.ylim(bottom = min(min(datac[agecol['alt']+'OBS']), min(datac[agecol['alt']+'PRED']), 0),
-		         top = max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED'])))
-		plt.xlim(left = agerange[0], right = agerange[1])
-	
-		# set legend
-		plt.legend(loc = 'best')
-		plt.ylabel(u'Elevation (m)')
-		plt.xlabel(u'Age (Ma)')
-		plt.title(graphtitle)
-
-		plt.savefig(graphpath + '/' + graphtitle +'_Alt.pdf')
-		fig1.clear()
-
-	if 'Projected' in profiletype and A and B:
-		print(u'\tPlotting projected transect')
-		# plot Projected transect
-		# Compute projected coordinates
-		coordproj = project(A, B, datac)
-		if inputdata: coordprojinputc = project(A, B, inputc)
-
-		# Loop on the data to plot
-		fig1 = plt.figure()
-		for item in dataplot:
-			if item != 'TTp':
-				if inputdata:
-					plt.errorbar(coordprojinputc, inputc[agecol[item]], yerr = inputc[errname[item]], 
-			    		         fmt = 'o', label = agename[item], color = colores[item])
-				else:
-					plt.plot(coordproj, datac[agecol[item]+'OBS'], 
-			    		     marker = 'o', linestyle = 'None', 
-							 label = agename[item], color = colores[item])
-		
-				plt.plot(coordproj, datac[agecol[item]+'PRED'], 
-		    		     marker = 's', linestyle = 'None', 
-						 label = predname[item], color = colores[item], alpha = 0.3)
-
-		# Remove -9999 values from the graph (= no data values)	
-		plt.ylim(bottom = agerange[0], top = agerange[1])
-	
-		# set legend
-		plt.legend(loc = 'best')
-		plt.xlabel(u'Distance along transect (km)', fontsize=size_x)
-		plt.ylabel(u'Age (Ma)', fontsize=size_y)
-		plt.title(graphtitle + '\nalong A %s - B %s' %(str(A), str(B)))
-
-		plt.savefig(graphpath + '/' + graphtitle +'_Proj.pdf')
-		fig1.clear()
+		plotTransect(inputdata, profiletype, dataplot,
+                 datac, inputc = inputc, coordproj = coordproj, coordprojinputc = coordprojinputc,
+				 agerange = agerange,
+				 agecol = agecol, errname = errname, colores = colores,
+				 predname = predname, agename = agename, profdict = profdict,
+				 graphpath = graphpath, graphtitle = graphtitle)
 
 	########
 	# Plot Altitude comparison
-	print(u'\tPlotting altitude comparison')
-	fig2 = plt.figure()
-	plt.gca().set_aspect('equal')
-	# Plot 1:1 line
-	plt.plot([0,8000], [0,8000], marker = 'None', linestyle = '-', 
-			 label = '1:1 line', color = 'lightgrey', alpha = 1)
-	# Plot the altitude comparison
-	plt.plot(datac[agecol['alt']+'OBS'], datac[agecol['alt']+'PRED'], 
-			 marker = 'o', linestyle = 'None',
-			 label = 'Sample', 
-			 color = colores[dataplot[0]])
-	# Write the 1:1 text over the line
-	plt.text((max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED']))-0)/2,
-			 (max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED']))-0)/2 - 
-			      (max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED']))-0)/20,
-			 '1:1', rotation = 45, color = 'lightgrey', alpha = 1, ha = 'center', va = 'center')
-
-	plt.ylim(bottom = min(min(datac[agecol['alt']+'OBS']), min(datac[agecol['alt']+'PRED']), 0), 
-	         top = max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED'])))
-	plt.xlim(left = min(min(datac[agecol['alt']+'OBS']), min(datac[agecol['alt']+'PRED']), 0), 
-			 right = max(max(datac[agecol['alt']+'OBS']), max(datac[agecol['alt']+'PRED'])))
-
-	plt.xlabel(u'Observed elevation (m)')
-	plt.ylabel(u'Predicted elevation (m)')
-	plt.legend(loc = 'best')
-	plt.title(graphtitle)
-
-	plt.savefig(graphpath + '/' + graphtitle +'_Compare_Alt.pdf')
-	fig2.clear()
-
+	if os.path.exists(graphpath + '/Compare') == False:
+			os.mkdir(graphpath + '/Compare')
+	# Call plot function for altitude
+	#print(u'\tPlotting altitude comparison')
+	plotComparisons(inputdata = inputdata, dataplot = ['Altitude'],
+                    datac = datac, inputc = inputc, 
+					agecol = agecol, errname = errname, colores = colores,
+					agename = agename,
+					graphpath = graphpath, graphtitle = graphtitle)
 	# Do also Age comparisons
-	for item in dataplot:
-		if item != 'TTp':
-			print(u'\tPlotting %s age comparison' %(str(item)))
-			fig2 = plt.figure()
-			plt.gca().set_aspect('equal')
-			# Plot 1:1 line
-			plt.plot([0,8000], [0,8000], marker = 'None', linestyle = '-', 
-					 label = '1:1 line', color = 'lightgrey', alpha = 1)
-			# Plot the age comparison
-			# And add error bars on data
-			if inputdata:
-				plt.errorbar(datac[agecol[item]+'OBS'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)], 
-							 datac[agecol[item]+'PRED'][np.logical_not(datac[agecol[item]+'OBS'] == -9999)],
-							 xerr = inputc[errname[item]][np.logical_not(np.isnan(inputc[errname[item]]))],
-			    	    	 fmt = 'o', label = 'Sample', color = colores[item])
-			else:
-				plt.plot(datac[agecol[item]+'OBS'], datac[agecol[item]+'PRED'], 
-					 		 marker = 'o', linestyle = 'None',
-							 label = 'Sample', 
-							 color = colores[item])
-
-			# Write the 1:1 text over the line
-			plt.text((max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2,
-					 (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/2 - 
-					      (max(max(datac[agecol[item]+'OBS']), max(datac[agecol[item]+'PRED']))-0)/20,
-				 	'1:1', rotation = 45, color = 'lightgrey', alpha = 1, ha = 'center', va = 'center')
-
-			plt.ylim(bottom = min(min(abs(datac[agecol[item]+'OBS'])), 
-						 		  min(abs(datac[agecol[item]+'PRED']))), 
-	    	    	 top = max(max(datac[agecol[item]+'OBS']), 
-				 			   max(datac[agecol[item]+'PRED'])))
-			plt.xlim(left = min(min(abs(datac[agecol[item]+'OBS'])), 
-							min(abs(datac[agecol[item]+'PRED']))), 
-				 right = max(max(datac[agecol[item]+'OBS']), 
-				 			 max(datac[agecol[item]+'PRED'])))
-
-			plt.xlabel(u'%s Observed (Ma)' %(str(item)))
-			plt.ylabel(u'%s Predicted (Ma)' %(str(item)))
-			plt.legend(loc = 'best')
-			plt.title(graphtitle)
-
-			plt.savefig(graphpath + '/' + graphtitle +'_Compare_' +str(item) + '.pdf')
-			fig2.clear()
+	# Call plot function for dataplot items
+	plotComparisons(inputdata = inputdata, dataplot = dataplot,
+                    datac = datac, inputc = inputc, 
+					agecol = agecol, errname = errname, colores = colores,
+					agename = agename,
+					graphpath = graphpath, graphtitle = graphtitle)
 
 	# Check if input and output PTt path files are present
 	if (inputdataPTt and outputdataPTt) and (not os.path.isfile(inputdataPTt) or not os.path.isfile(outputdataPTt)):
-		print(u'\n \033[91mWarning:\033[00m No %s and/or %s file, I am skipping the plot of the error bars...\n' % (inputdataPTt, outputdataPTt))
+		print(u'\n \033[91mWarning:\033[00m No %s and/or %s file, I am skipping the PTt plot...\n' % (inputdataPTt, outputdataPTt))
 		inputdataPTt = None
 		outputdataPTt = None
-	if inputdataPTt and outputdataPTt and ('TTp' in dataplot):
+	if inputdataPTt and outputdataPTt and \
+	   ('TTp' in dataplot or 'Ttp' in dataplot or 'ttp' in dataplot or 'TTP' in dataplot or
+	    'tTP' in dataplot or 'ttP' in dataplot or 'TtP' in dataplot or 'tTp' in dataplot):
 		print('\tPlotting PTt paths')
-		# Read the inputdataPTt (.csv) file
-		inputPTt = np.genfromtxt(fname = inputdataPTt, delimiter = ',', names = True)
-		# Read the Predicion PT-t (.csv) file
-		# PROBLEM TO READ THE OUTPUT FILE COMPARE-TT.CSV if not worked in a text editor ?
-		# Clean it:
-		with open(outputdataPTt, 'r') as f1:
-			with open(outputdataPTt + 'touched', 'w') as f2:
-				lines = f1.readlines()
-				changes = False
-				for k in range (0, len(lines)-1):
-					if lines[k] != '':
-						# Remove the ',' at the eand of the line if there is one
-						if lines[k][-2] == ',' :
-							if lines[k][-1] != ',' :
-								lines[k] = lines[k][0:-2]+lines[k][-1]
-								changes = True
-						# merge line k and line k+1 if lat/long not followed by data
-						if len(lines[k].split(',')) == 2 and lines[k+1].split(',')[0] == '' and lines[k+1].split(',')[1] == '':
-							lines[k] = lines[k].rstrip('\n') + lines[k+1][1:]
-							lines[k+1] = ''
-							changes = True
-				if changes:
-					# Write the lines a new file, but not the empty lines
-					for line in lines:
-						if line.strip('\n') != '':
-							f2.write(line)
-					# update the name of the output PTt file with the corrected file
-					outputdataPTt = outputdataPTt + 'touched'
-					print('\t\033[91mWarning:\033[00m Predicted input file modified to %s to be plotted' %(outputdataPTt))
-
-		# Read the cleaned Predicion PT-t (.csv) file
-		outputPTt = np.genfromtxt(fname = outputdataPTt, delimiter = ',', names = True)
-
-		# Find number of samples in the input file
-		nPTtsamples = max(inputPTt[np.isnan(inputPTt['LAT']) == False].shape[0],
-		    				inputPTt[np.isnan(inputPTt['LON']) == False].shape[0],
-							inputPTt[np.isnan(inputPTt['HEIGHT']) == False].shape[0],
-							inputPTt[np.isnan(inputPTt['SAMPLE']) == False].shape[0])
-		# Find indexes of sample names/beginning
-		indexPTt = np.where(np.isnan(inputPTt['LAT']) == False)[0]
-
-		if nPTtsamples > 0:
-			fig3 = plt.figure()
-			# For each sample with PT-t, 
-			for k in range (0, nPTtsamples):
-				#	Extract the PTt path from the file
-				if k == (nPTtsamples-1):
-					ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:]
-					pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:]
-				else:
-					ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:indexPTt[k + 1]]
-					pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:indexPTt[k + 1]]
-				# Plot the enveloppe deduced from the error bars on T
-				plt.fill_between(x = ppt['TIMEH'], 
-        		                 y1 = ppt['TEMPH'] + ppt['DTEMPH'],
-        		                 y2 = ppt['TEMPH'] - ppt['DTEMPH'],
-        		                 alpha=0.20, 
-        		                 color='lightblue', 
-        		                 interpolate=True,
-        		                 label = 'Acceptable paths')
-				# plot the max enveloppe
-				plt.plot(ppt['TIMEH'],
-				         ppt['TEMPH'] + ppt['DTEMPH'],
-						 marker = 'None', linestyle = '-', 
-					 	 color = 'lightblue', alpha = 1,
-						 label = 'min-max')
-				# Plot the min enveloppe
-				plt.plot(ppt['TIMEH'],
-				         ppt['TEMPH'] - ppt['DTEMPH'],
-						 marker = 'None', linestyle = '-', 
-					 	 color = 'lightblue', alpha = 1)
-				# 	Plot the mean PT-t path
-				plt.plot(ppt['TIMEH'],
-				         ppt['TEMPH'],
-						 marker = 'None', linestyle = '-', 
-					 	 color = 'blue', alpha = 1,
-						 label = 'mean')
-				#	Plot the prediction
-				plt.plot(pptOut['TIME'],
-				         pptOut['TEMPPRED'],
-						 marker = 'None', linestyle = '-', 
-					 	 color = 'green', alpha = 1,
-						 label = 'predictions')
-
-				#	Save the graph
-				plt.xlabel(u'Time before present (Ma)')
-				plt.ylabel(u'Temperature (Ma)')
-				plt.legend(loc = 'best')
-				plt.title(graphtitle)
-				# Invert x- and y-axis
-				plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
-						  max(ppt['TEMPH'] + ppt['DTEMPH']), min(ppt['TEMPH'] - ppt['DTEMPH'])])
-				plt.savefig(graphpath + '/' + graphtitle +'_ttpath_sample' + str(k+1) + '.pdf')
-				fig3.clear()
-		else:
-			print('\033[91mWarning:\033[00m No PT-t paths to plot...')	
+		if os.path.exists(graphpath + '/TTpaths') == False:
+			os.mkdir(graphpath + '/TTpaths')
+		# Call the plot PTt function
+		plotTTp(inputdataPTt = inputdataPTt, 
+		        outputdataPTt =outputdataPTt,
+				graphpath = graphpath, graphtitle = graphtitle)	
 	else:
 		print('\033[91mWarning:\033[00m No PT-t paths to plot...')
 
+	# TO DO !!!!
+	if ('MTL' in dataplot or 'MTl' in dataplot or 'mtl' in dataplot or 'mtL' in dataplot or
+	    'mTL' in dataplot or 'MtL' in dataplot or 'mtl' in dataplot or 'mTl' in dataplot):
+		print('\tPlotting MTL')
+		if os.path.exists(graphpath + '/MTL') == False:
+			os.mkdir(graphpath + '/MTL')
+		plotMTL()
+	# END - TO DO !!!!
 
 	print('\n###########################################################################\n')
 	print('\t\t\t\tEND\n')

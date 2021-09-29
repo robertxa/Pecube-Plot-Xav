@@ -3,7 +3,8 @@ History changes of the python module pyPlotPecube
 1.3.0 (2021/09/29)
 	- Add plot of input and predicted PTt paths
 	- Update Readme accordingly
-	-
+	- Add possibility to change Casse in the input files
+	- Clean/simplify the code
 
 1.2.3 (2021/09/24)
 	- Add age and predictions comparison graph, with errorbars
