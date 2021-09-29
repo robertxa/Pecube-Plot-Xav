@@ -537,7 +537,8 @@ def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None
 
 
 #################################################
-def plotMTL():
+def plotMTL(inputdataFTL, outputdataFTL =outputdataFTL,
+			graphpath = 'Graphs', graphtitle = None):
 
 	print('\t\033[91mWarning:\033[00m MTL not implemented for now...')	
 	
@@ -552,7 +553,7 @@ def plotMTL():
 	# Find number of sample with MTL
 	# For each sample with MTL,
 	#for k in range (0, nFTLsamples):
-	#	fig3 = plt.figure()
+	#	fig4 = plt.figure()
 	#	# Extract the PTt path from the file
 	#	# Build input histogram
 	#	n, bins, patches = plt.hist(x = input MTL, 
@@ -577,7 +578,7 @@ def plotMTL():
 	#	plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
 	#			  max(ppt['TEMPH'] + ppt['DTEMPH']), min(ppt['TEMPH'] - ppt['DTEMPH'])])
 	#	plt.savefig(graphpath + '/TTpaths/' + graphtitle +'_ttpath_sample' + str(k+1) + '.pdf')
-	#	fig3.clear()
+	#	fig4.clear()
 
 	return
 
