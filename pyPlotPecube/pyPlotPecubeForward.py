@@ -544,20 +544,47 @@ def plotMTL():
 	# TO DO
 
 	# Read input file
+	# Should be FTL_files.csv; Same way to read it than the TTp files ?
 
 	# Read Output file
+	# Comparison file is 'output/CompareFTL.csv'; Same way to read it than the TTp files ?
 
 	# Find number of sample with MTL
 	# For each sample with MTL,
-	#	Build input histogram
-	#	Build output histogram
-	#	Save the graph
+	#for k in range (0, nFTLsamples):
+	#	fig3 = plt.figure()
+	#	# Extract the PTt path from the file
+	#	# Build input histogram
+	#	n, bins, patches = plt.hist(x = input MTL, 
+	#                               bins = 10, #'auto', 'fd','doane', 'scott', 'stone', 'rice', 'sturges', 'sqrt'
+	#                               density = False, 
+	#								label = 'Observed MTL'
+	#                               facecolor='g', 
+	#                               alpha=0.75)
+	#	# Build output histogram
+	#	n, bins, patches = plt.hist(x = predicted MTL, 
+	#                               bins = 10, #'auto', 'fd','doane', 'scott', 'stone', 'rice', 'sturges', 'sqrt'
+	#                               density = False, 
+	#								label = 'Predicted MTL'
+	#                               facecolor='b', 
+	#                               alpha=0.3)
+	#	# Save the graph
+	#	plt.xlabel(u'Time before present (Ma)')
+	#	plt.ylabel(u'Temperature (Ma)')
+	#	plt.legend(loc = 'best')
+	#	plt.title(graphtitle)
+	#	# Invert x- and y-axis
+	#	plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
+	#			  max(ppt['TEMPH'] + ppt['DTEMPH']), min(ppt['TEMPH'] - ppt['DTEMPH'])])
+	#	plt.savefig(graphpath + '/TTpaths/' + graphtitle +'_ttpath_sample' + str(k+1) + '.pdf')
+	#	fig3.clear()
 
 	return
 
 #################################################
 ################# Main code #####################
 def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = None,
+					  inputdataFTL = None, outputdataFTL = None,
 					  dataplot = ['AHe','AFT'],
 					  graphpath = 'Graphs', graphtitle = None, agerange = None,
 					  profiletype = [], A = None, B = None,
@@ -578,7 +605,16 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 									   Usually, this is 'output/CompareTT.csv'
 									   Need to be given if 'TTp' in dataplot
         							   Default = None
+		
+		inputdataFTL (str, optional): Path and file name of the input FTL data file 
+									  Need to be given if 'FTL' in dataplot
+        							  Default = None 
 
+    	outputdataFTL (str, optional): Path and file name of the output FTL prediction/comparison file
+									   Usually, this is 'output/CompareFTL.csv'
+									   Need to be given if 'FTL' in dataplot
+        							   Default = None
+		
 		dataplot (list, optional): List of data to plot ; By default, the altitude will be plotted
 				        		    Do not forget the simple quotes !!!
 						   			['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']
@@ -745,10 +781,24 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 	# TO DO !!!!
 	if ('MTL' in dataplot or 'MTl' in dataplot or 'mtl' in dataplot or 'mtL' in dataplot or
 	    'mTL' in dataplot or 'MtL' in dataplot or 'mtl' in dataplot or 'mTl' in dataplot):
-		print('\tPlotting MTL')
-		if os.path.exists(graphpath + '/MTL') == False:
-			os.mkdir(graphpath + '/MTL')
-		plotMTL()
+
+		# Check if FTL input files are there...
+		if (inputdataFTL and outputdataFTL) and (not os.path.isfile(inputdataFTL) or not os.path.isfile(outputdataFTL)):
+			print(u'\n \033[91mWarning:\033[00m No %s and/or %s file, I am skipping the PTt plot...\n' % (inputdataFLT, outputdataFTL))
+			#inputdataFTL = None
+			#outputdataFTL = None
+		else:
+			print('\tPlotting MTL')
+			# Make the output folder in Graphs/
+			if os.path.exists(graphpath + '/MTL') == False:
+				os.mkdir(graphpath + '/MTL')
+			# Call the function to plot the MTL
+			# Input file, comparefile, 
+			plotMTL(inputdataFTL = inputdataFTL, 
+		    	    outputdataFTL =outputdataFTL,
+					graphpath = graphpath, graphtitle = graphtitle)
+	else:
+		print('\033[91mWarning:\033[00m No FTL data to plot...')
 	# END - TO DO !!!!
 
 	print('\n###########################################################################\n')
@@ -778,6 +828,8 @@ if __name__ == "__main__":
 	inputdata = '../Tests/Forward/Data/Trujillo.csv'
 	inputdataPTt = '../Tests/Forward/Data/TrujilloPTt.csv'
 	outputdataPTt = '../Tests/Forward/Data/TimeTemperaturePaths.csv'
+	inputdataFTL = '../Tests/Forward/Data/FTL_files.csv'
+	outputdataFTL = '../Tests/Forward/Data/CompareFLT.csv'
 
 	# graphtitle: title to write on the graph
 	graphtitle = 'Trujillo transect'
@@ -813,6 +865,8 @@ if __name__ == "__main__":
 					  inputdata = inputdata,
 					  inputdataPTt = inputdataPTt,
 					  outputdataPTt = outputdataPTt,
+					  inputdataFTL = inputdataFTL,
+					  outputdataFTL = outputdataFTL,
 					  graphtitle = graphtitle,
 					  agerange = agerange,
 					  profiletype = profiletype,

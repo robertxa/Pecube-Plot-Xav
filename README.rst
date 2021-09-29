@@ -76,8 +76,16 @@ For Forward plots, arguments are :
     4. ``outputdataPTt`` (str, optional): Path and file name of the output PTt prediction/comparison file. Usually, this is ``'output/CompareTT.csv'``. Need to be given if ``'TTp'`` in ``dataplot``.
    
          Default = ``None``,
+    
+    5. ``inputdataFTL`` (str, optional): Path and file name of the input FTL data file. Need to be given if ``'FTL'`` in ``dataplot``.
+        
+        Default = ``None`` 
 
-	5. ``dataplot`` (list, optional): List of data to plot: ``['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']``; by default, the altitude will be plotted; Do not forget the simple quotes !!! 
+    6. ``outputdataFTL`` (str, optional): Path and file name of the output FTL prediction/comparison file. Usually, this is ``'output/CompareFTL.csv'`` Need to be given if ``'FTL'`` in ``dataplot``.
+    
+        Default = ``None``
+
+	7. ``dataplot`` (list, optional): List of data to plot: ``['AHe', 'AFT', 'ZHe', 'ZFT', 'KAr', 'MAr', 'BAr', 'MTL', 'TTp']``; by default, the altitude will be plotted; Do not forget the simple quotes !!! 
         
         Note: For the moment, ``MTL`` is not implemented.
 
@@ -85,35 +93,35 @@ For Forward plots, arguments are :
         
         Defaults = ``['AHe','AFT']``.
 
-	6. ``graphpath`` (str, optional): name of the folder where the plot will be written. Usually you do not have to change it.
+	8. ``graphpath`` (str, optional): name of the folder where the plot will be written. Usually you do not have to change it.
         
         Defaults = ``'Graphs'``.
 
-	7. ``graphtitle`` (str, optional): title to write on the graph. 
+	9. ``graphtitle`` (str, optional): title to write on the graph. 
         
         Defaults = ``None``.
 
-	8. ``agerange`` (2*1 array of floats, optional): range of the ages to plot on the profiles ``[min, max]``.
+	10. ``agerange`` (2*1 array of floats, optional): range of the ages to plot on the profiles ``[min, max]``.
         
         Defaults = ``None``.
 
-	9. ``profiletype`` (list, optional): type of profile, could be one or more of ``['Latitude', 'Longitude', 'Altitude', 'Projected']``. If ``[]``, no age profile is plotted.
+	11. ``profiletype`` (list, optional): type of profile, could be one or more of ``['Latitude', 'Longitude', 'Altitude', 'Projected']``. If ``[]``, no age profile is plotted.
         
         Defaults = ``[]``.
 
-    10. ``size_x`` (int, optional): Font size for x-axis. 
+    12. ``size_x`` (int, optional): Font size for x-axis. 
     
         Defaults = ``15``.
         
-	11. size_y (int, optional): Font size for y-axis. 
+	13. size_y (int, optional): Font size for y-axis. 
         
         Defaults = ``15``.
 
-	12. ``A``, ``B`` (floats, optional): If need of a projected transect, define the line along which we will project with the coordinate of the point A and B defining, respectivelly, the begining and the end of the transect, in lat-long/WGS84.
+	14. ``A``, ``B`` (floats, optional): If need of a projected transect, define the line along which we will project with the coordinate of the point A and B defining, respectivelly, the begining and the end of the transect, in lat-long/WGS84.
         
         Defaults = ``None``.
     
-    13. ``agename`` (dict, optional): legend of each data system         
+    15. ``agename`` (dict, optional): legend of each data system         
 		
         If ``None``, this is set to
         
@@ -137,7 +145,7 @@ For Forward plots, arguments are :
 			
         Default = ``None``. 
 	
-    14. ``predname`` (dict, optional): legend of each predicted system.
+    16. ``predname`` (dict, optional): legend of each predicted system.
         
         If ``None``, this is set to:
             
@@ -161,7 +169,7 @@ For Forward plots, arguments are :
         
         Default = ``None``. 
 	
-    15. ``colores`` (dict, optional): Colors used for the different age system
+    17. ``colores`` (dict, optional): Colors used for the different age system
     
         If ``None``, this is set to:
             
