@@ -1,5 +1,11 @@
 History changes of the python module pyPlotPecube
 
+1.3.1 (2021/10/04)
+	- Add stacked PTt path plot
+	- Ameliorate the output structure
+	- Prepare for MTL plots
+	- Colors in terminal output
+
 1.3.0 (2021/09/29)
 	- Add plot of input and predicted PTt paths
 	- Update Readme accordingly

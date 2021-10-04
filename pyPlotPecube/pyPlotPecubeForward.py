@@ -611,7 +611,7 @@ def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None
 			plt.figure(5).clear()
 			plt.close(plt.figure(5))
 	else:
-		print('\033[91mWarning:\033[00m No PT-t paths to plot...')	
+		print('\t\033[91mWarning:\033[00m No PT-t paths to plot...')	
 
 	return
 
@@ -690,6 +690,9 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 		inputdataFTL (str, optional): Path and file name of the input FTL data file 
 									  Need to be given if 'FTL' in dataplot
         							  Default = None 
+		
+		stackTT (boolean, optional): Tells if we want to plot all the PTt path in one single graph
+									 Defaults to True
 
     	outputdataFTL (str, optional): Path and file name of the output FTL prediction/comparison file
 									   Usually, this is 'output/CompareFTL.csv'
@@ -801,6 +804,7 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 		agecol, errname, junk2, junk1, junk, profdict =  dict_pecube()
 
 	# Plot profiles
+	print('\x1b[32;1mPlotting profiles...\033[00m')
 	if profiletype:
 		if os.path.exists(graphpath + '/Profile') == False:
 			os.mkdir(graphpath + '/Profile')
@@ -827,7 +831,7 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 	if os.path.exists(graphpath + '/Compare') == False:
 			os.mkdir(graphpath + '/Compare')
 	# Call plot function for altitude
-	#print(u'\tPlotting altitude comparison')
+	print(u'\x1b[32;1mPlotting observations - predictions comparison...\033[00m')
 	plotComparisons(inputdata = inputdata, dataplot = ['Altitude'],
                     datac = datac, inputc = inputc, 
 					agecol = agecol, errname = errname, colores = colores,
@@ -841,6 +845,7 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 					agename = agename,
 					graphpath = graphpath, graphtitle = graphtitle)
 
+	print('\x1b[32;1mPlotting PTt paths...\033[00m')
 	# Check if input and output PTt path files are present
 	if (inputdataPTt and outputdataPTt) and (not os.path.isfile(inputdataPTt) or not os.path.isfile(outputdataPTt)):
 		print(u'\n \033[91mWarning:\033[00m No %s and/or %s file, I am skipping the PTt plot...\n' % (inputdataPTt, outputdataPTt))
@@ -849,7 +854,6 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 	if inputdataPTt and outputdataPTt and \
 	   ('TTp' in dataplot or 'Ttp' in dataplot or 'ttp' in dataplot or 'TTP' in dataplot or
 	    'tTP' in dataplot or 'ttP' in dataplot or 'TtP' in dataplot or 'tTp' in dataplot):
-		print('\tPlotting PTt paths')
 		if os.path.exists(graphpath + '/TTpaths') == False:
 			os.mkdir(graphpath + '/TTpaths')
 		# Call the plot PTt function
@@ -857,9 +861,10 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 		        outputdataPTt =outputdataPTt,
 				graphpath = graphpath, graphtitle = graphtitle, stackTT = True)	
 	else:
-		print('\033[91mWarning:\033[00m No PT-t paths to plot...')
+		print('\t\033[91mWarning:\033[00m No PT-t paths to plot...')
 
 	# TO DO !!!!
+	print('\x1b[32;1mPlotting MTL...\x1b[0m')
 	if ('MTL' in dataplot or 'MTl' in dataplot or 'mtl' in dataplot or 'mtL' in dataplot or
 	    'mTL' in dataplot or 'MtL' in dataplot or 'mtl' in dataplot or 'mTl' in dataplot):
 
@@ -869,7 +874,6 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 			#inputdataFTL = None
 			#outputdataFTL = None
 		else:
-			print('\tPlotting MTL')
 			# Make the output folder in Graphs/
 			if os.path.exists(graphpath + '/MTL') == False:
 				os.mkdir(graphpath + '/MTL')
@@ -879,7 +883,7 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 		    	    outputdataFTL =outputdataFTL,
 					graphpath = graphpath, graphtitle = graphtitle)
 	else:
-		print('\033[91mWarning:\033[00m No FTL data to plot...')
+		print('\t\033[91mWarning:\033[00m No FTL data to plot...')
 	# END - TO DO !!!!
 
 	print('\n###########################################################################\n')
