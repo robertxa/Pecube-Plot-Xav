@@ -1,6 +1,8 @@
 TO DO:
     - Implement MTL forward plots
     - Implement MTL inverse plots
+    - Stack TTpaths of the whole model on a single graph ?
+    - 
 
 BUGS FOUNDS/TO BE CORRECTED:
     - 

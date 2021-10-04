@@ -422,7 +422,7 @@ def plotComparisons(inputdata, dataplot,
 	return
 
 #################################################
-def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None):
+def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None, stackTT = True):
 	"""
 	Function to plot Time-Temperature paths
 
@@ -434,6 +434,8 @@ def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None
 		                           Defaults to 'Graphs'.
 		graphtitle (str, optional): Title of the graph.
 		                            Defaults to None.
+		stackTT (boolean, optional): Tells if we want to plot all the PTt path in one single graph
+									 Defaults to True
 	"""
 
 	# Read the inputdataPTt (.csv) file
@@ -478,9 +480,9 @@ def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None
 	indexPTt = np.where(np.isnan(inputPTt['LAT']) == False)[0]
 	
 	if nPTtsamples > 0:
-		fig3 = plt.figure()
 		# For each sample with PT-t, 
 		for k in range (0, nPTtsamples):
+			fig3 = plt.figure(3)
 			#	Extract the PTt path from the file
 			if k == (nPTtsamples-1):
 				ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:]
@@ -489,7 +491,7 @@ def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None
 				ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:indexPTt[k + 1]]
 				pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:indexPTt[k + 1]]
 			# Plot the enveloppe deduced from the error bars on T
-			plt.fill_between(x = ppt['TIMEH'], 
+			fig3 = plt.fill_between(x = ppt['TIMEH'], 
     		                 y1 = ppt['TEMPH'] + ppt['DTEMPH'],
     		                 y2 = ppt['TEMPH'] - ppt['DTEMPH'],
     		                 alpha=0.20, 
@@ -497,39 +499,117 @@ def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None
     		                 interpolate=True,
     		                 label = 'Acceptable paths')
 			# plot the max enveloppe
-			plt.plot(ppt['TIMEH'],
+			fig3 = plt.plot(ppt['TIMEH'],
 			         ppt['TEMPH'] + ppt['DTEMPH'],
 					 marker = 'None', linestyle = '-', 
 				 	 color = 'lightblue', alpha = 1,
 					 label = 'Min-Max')
 			# Plot the min enveloppe
-			plt.plot(ppt['TIMEH'],
+			fig3 = plt.plot(ppt['TIMEH'],
 			         ppt['TEMPH'] - ppt['DTEMPH'],
 					 marker = 'None', linestyle = '-', 
 				 	 color = 'lightblue', alpha = 1)
 			# 	Plot the mean PT-t path
-			plt.plot(ppt['TIMEH'],
+			fig3 = plt.plot(ppt['TIMEH'],
 			         ppt['TEMPH'],
 					 marker = 'None', linestyle = '-', 
 				 	 color = 'blue', alpha = 1,
 					 label = 'Mean')
 			#	Plot the prediction
-			plt.plot(pptOut['TIME'],
+			fig3 = plt.plot(pptOut['TIME'],
 			         pptOut['TEMPPRED'],
 					 marker = 'None', linestyle = '-', 
 				 	 color = 'green', alpha = 1,
 					 label = 'Predictions')
 
 			#	Save the graph
-			plt.xlabel(u'Time before present (Ma)')
-			plt.ylabel(u'Temperature (Ma)')
-			plt.legend(loc = 'best')
-			plt.title(graphtitle)
+			fig3 = plt.xlabel(u'Time before present (Ma)')
+			fig3 = plt.ylabel(u'Temperature (Ma)')
+			fig3 = plt.legend(loc = 'best')
+			fig3 = plt.title(graphtitle)
 			# Invert x- and y-axis
-			plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
+			fig3 = plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
 					  max(ppt['TEMPH'] + ppt['DTEMPH']), min(ppt['TEMPH'] - ppt['DTEMPH'])])
-			plt.savefig(graphpath + '/TTpaths/' + graphtitle +'_ttpath_sample' + str(k+1) + '.pdf')
-			fig3.clear()
+			plt.figure(3).savefig(graphpath + '/TTpaths/' + graphtitle +'_ttpath_sample' + str(k+1) + '.pdf')
+			plt.figure(3).clear()
+			plt.close(plt.figure(3))
+		
+		if stackTT:
+			print('\tPlotting stacked PTt...')
+			fig5 = plt.figure(5)
+			for k in range (0, nPTtsamples):
+				#	Extract the PTt path from the file
+				if k == (nPTtsamples-1):
+					ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:]
+					pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:]
+					# Plot the enveloppe deduced from the error bars on T
+					fig5 = plt.fill_between(x = ppt['TIMEH'], 
+    		    		             y1 = ppt['TEMPH'] + ppt['DTEMPH'],
+    		        		         y2 = ppt['TEMPH'] - ppt['DTEMPH'],
+    		            		     alpha=0.20, 
+    		                		 color='lightblue', 
+		    		                 interpolate=True,
+    				                 label = 'Acceptable paths')
+					# plot the max enveloppe
+					fig5 = plt.plot(ppt['TIMEH'],
+			    	    	    	ppt['TEMPH'] + ppt['DTEMPH'],
+						 			marker = 'None', linestyle = '-', 
+					 	 			color = 'lightblue', alpha = 1,
+						 			label = 'Min-Max')
+					# Plot the mean PT-t path
+					fig5 = plt.plot(ppt['TIMEH'],
+				         			ppt['TEMPH'],
+						 			marker = 'None', linestyle = '-', 
+					 	 			color = 'blue', alpha = 1,
+						 			label = 'Mean')
+					# Plot the prediction
+					fig5 = plt.plot(pptOut['TIME'],
+			         				pptOut['TEMPPRED'],
+					 				marker = 'None', linestyle = '-', 
+				 	 				color = 'green', alpha = 1,
+					 				label = 'Predictions')
+				else:
+					ppt = inputPTt[['TIMEH', 'TEMPH', 'DTEMPH']][indexPTt[k]:indexPTt[k + 1]]
+					pptOut = outputPTt[['TIME', 'TEMP', 'TEMPPRED']][indexPTt[k]:indexPTt[k + 1]]
+					# Plot the enveloppe deduced from the error bars on T
+					fig5 = plt.fill_between(x = ppt['TIMEH'], 
+    		    		             y1 = ppt['TEMPH'] + ppt['DTEMPH'],
+    		        		         y2 = ppt['TEMPH'] - ppt['DTEMPH'],
+    		            		     alpha=0.20, 
+	    		            	     color='lightblue', 
+    			                	 interpolate=True)
+					# plot the max enveloppe
+					fig5 = plt.plot(ppt['TIMEH'],
+			    		     ppt['TEMPH'] + ppt['DTEMPH'],
+							 marker = 'None', linestyle = '-', 
+					 		 color = 'lightblue', alpha = 1)
+					# Plot the min enveloppe
+					fig5 = plt.plot(ppt['TIMEH'],	
+				    	     		ppt['TEMPH'] - ppt['DTEMPH'],
+						 			marker = 'None', linestyle = '-', 
+				 		 			color = 'lightblue', alpha = 1)
+					# Plot the mean PT-t path
+					fig5 = plt.plot(ppt['TIMEH'],
+				    	     ppt['TEMPH'],
+							 marker = 'None', linestyle = '-', 
+						 	 color = 'blue', alpha = 1)
+					# Plot the prediction
+					fig5 = plt.plot(pptOut['TIME'],
+			    	     			pptOut['TEMPPRED'],
+						 			marker = 'None', linestyle = '-', 
+					 	 			color = 'green', alpha = 1)
+
+			#	Save the graph with stacked plots
+			fig5 = plt.xlabel(u'Time before present (Ma)')
+			fig5 = plt.ylabel(u'Temperature (Ma)')
+			fig5 = plt.legend(loc = 'best')
+			fig5 = plt.title(graphtitle)
+			# Invert x- and y-axis
+			fig5 = plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
+					  max(ppt['TEMPH'] + ppt['DTEMPH']), min(ppt['TEMPH'] - ppt['DTEMPH'])])
+			plt.figure(5).savefig(graphpath + '/TTpaths/' + graphtitle +'_ttpath_stacks.pdf')
+			plt.figure(5).clear()
+			plt.close(plt.figure(5))
 	else:
 		print('\033[91mWarning:\033[00m No PT-t paths to plot...')	
 
@@ -537,10 +617,10 @@ def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None
 
 
 #################################################
-def plotMTL(inputdataFTL, outputdataFTL =outputdataFTL,
+def plotMTL(inputdataFTL, outputdataFTL = None,
 			graphpath = 'Graphs', graphtitle = None):
 
-	print('\t\033[91mWarning:\033[00m MTL not implemented for now...')	
+	print('\t\t\033[91mWarning:\033[00m MTL not implemented for now...')	
 	
 	# TO DO
 
@@ -584,7 +664,7 @@ def plotMTL(inputdataFTL, outputdataFTL =outputdataFTL,
 
 #################################################
 ################# Main code #####################
-def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = None,
+def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = None, stackTT = True,
 					  inputdataFTL = None, outputdataFTL = None,
 					  dataplot = ['AHe','AFT'],
 					  graphpath = 'Graphs', graphtitle = None, agerange = None,
@@ -775,7 +855,7 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 		# Call the plot PTt function
 		plotTTp(inputdataPTt = inputdataPTt, 
 		        outputdataPTt =outputdataPTt,
-				graphpath = graphpath, graphtitle = graphtitle)	
+				graphpath = graphpath, graphtitle = graphtitle, stackTT = True)	
 	else:
 		print('\033[91mWarning:\033[00m No PT-t paths to plot...')
 
@@ -832,6 +912,9 @@ if __name__ == "__main__":
 	inputdataFTL = '../Tests/Forward/Data/FTL_files.csv'
 	outputdataFTL = '../Tests/Forward/Data/CompareFLT.csv'
 
+	# Stack all the TT paths on a single graph
+	stackTT = True
+
 	# graphtitle: title to write on the graph
 	graphtitle = 'Trujillo transect'
 
@@ -866,6 +949,7 @@ if __name__ == "__main__":
 					  inputdata = inputdata,
 					  inputdataPTt = inputdataPTt,
 					  outputdataPTt = outputdataPTt,
+					  stackTT = stackTT,
 					  inputdataFTL = inputdataFTL,
 					  outputdataFTL = outputdataFTL,
 					  graphtitle = graphtitle,
