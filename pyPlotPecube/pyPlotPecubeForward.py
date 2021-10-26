@@ -620,45 +620,86 @@ def plotTTp(inputdataPTt, outputdataPTt, graphpath = 'Graphs', graphtitle = None
 def plotMTL(inputdataFTL, outputdataFTL = None,
 			graphpath = 'Graphs', graphtitle = None):
 
-	print('\t\t\033[91mWarning:\033[00m MTL not implemented for now...')	
+	print('\t\t\033[91mWarning:\033[00m MTL implemented but not tested for now...\n\t\t\tUse with caution...')	
 	
 	# TO DO
 
 	# Read input file
 	# Should be FTL_files.csv; Same way to read it than the TTp files ?
+	inputFTL = np.genfromtxt(fname = inputdataFTL, delimiter = ',', names = True, case_sensitive = 'upper')
 
 	# Read Output file
 	# Comparison file is 'output/CompareFTL.csv'; Same way to read it than the TTp files ?
+	# Clean it:
+	with open(outputdataFTL, 'r') as f1:
+		with open(outputdataFTL + 'touched', 'w') as f2:
+			lines = f1.readlines()
+			changes = False
+			for k in range (0, len(lines)-1):
+				if lines[k] != '':
+					# Remove the ',' at the eand of the line if there is one
+					if lines[k][-2] == ',' :
+						if lines[k][-1] != ',' :
+							lines[k] = lines[k][0:-2]+lines[k][-1]
+							changes = True
+					# merge line k and line k+1 if lat/long not followed by data
+					if len(lines[k].split(',')) == 2 and lines[k+1].split(',')[0] == '' and lines[k+1].split(',')[1] == '':
+						lines[k] = lines[k].rstrip('\n') + lines[k+1][1:]
+						lines[k+1] = ''
+						changes = True
+			if changes:
+				# Write the lines a new file, but not the empty lines
+				for line in lines:
+					if line.strip('\n') != '':
+						f2.write(line)
+				# update the name of the output PTt file with the corrected file
+				outputdataFTL = outputdataFTL + 'touched'
+				print('\t\033[91mWarning:\033[00m Predicted input file modified to %s to be plotted' %(outputdataFTL))
+
+	# Read the cleaned Predicion PT-t (.csv) file
+	outputFTL = np.genfromtxt(fname = outputdataFTL, delimiter = ',', names = True, case_sensitive = 'upper')
 
 	# Find number of sample with MTL
+	nFTLsamples = max(inputFTL[np.isnan(inputFTL['LAT']) == False].shape[0],
+	    				inputFTL[np.isnan(inputFTL['LON']) == False].shape[0],
+						inputFTL[np.isnan(inputFTL['HEIGHT']) == False].shape[0],
+						inputFTL[np.isnan(inputFTL['SAMPLE']) == False].shape[0])
+	# Find indexes of sample names/beginning
+	indexFTL = np.where(np.isnan(inputFTL['LAT']) == False)[0]
+	
 	# For each sample with MTL,
-	#for k in range (0, nFTLsamples):
-	#	fig4 = plt.figure()
-	#	# Extract the PTt path from the file
-	#	# Build input histogram
-	#	n, bins, patches = plt.hist(x = input MTL, 
-	#                               bins = 10, #'auto', 'fd','doane', 'scott', 'stone', 'rice', 'sturges', 'sqrt'
-	#                               density = False, 
-	#								label = 'Observed MTL'
-	#                               facecolor='g', 
-	#                               alpha=0.75)
-	#	# Build output histogram
-	#	n, bins, patches = plt.hist(x = predicted MTL, 
-	#                               bins = 10, #'auto', 'fd','doane', 'scott', 'stone', 'rice', 'sturges', 'sqrt'
-	#                               density = False, 
-	#								label = 'Predicted MTL'
-	#                               facecolor='b', 
-	#                               alpha=0.3)
-	#	# Save the graph
-	#	plt.xlabel(u'Time before present (Ma)')
-	#	plt.ylabel(u'Temperature (Ma)')
-	#	plt.legend(loc = 'best')
-	#	plt.title(graphtitle)
-	#	# Invert x- and y-axis
-	#	plt.axis([max(ppt['TIMEH']), min(ppt['TIMEH']),
-	#			  max(ppt['TEMPH'] + ppt['DTEMPH']), min(ppt['TEMPH'] - ppt['DTEMPH'])])
-	#	plt.savefig(graphpath + '/TTpaths/' + graphtitle +'_ttpath_sample' + str(k+1) + '.pdf')
-	#	fig4.clear()
+	for k in range (0, nFTLsamples):
+		fig4 = plt.figure()
+		# Extract the FTL from the file
+		if k == (nFTLsamples-1):
+				ppt = inputFTL['FTL'][indexFTL[k]:]
+				pptOut = outputFTL['FTLPRED'][indexFTL[k]:]
+		else:
+			ppt = inputFTL['FTL'][indexFTL[k]:indexFTL[k + 1]]
+			pptOut = outputFTL['FTLPRED'][indexFTL[k]:indexFTL[k + 1]]
+		# Build input histogram
+		n, bins, patches = plt.hist(x = ppt['FTL'], 
+	                               bins = 10, #'auto', 'fd','doane', 'scott', 'stone', 'rice', 'sturges', 'sqrt'
+	                               density = False, 
+								   label = 'Observed FTL',
+	                               color='g',
+								   edgecolor = 'black', 
+	                               alpha=0.75)
+		# Build output histogram
+		n, bins, patches = plt.hist(x = pptOut['FTL'], 
+	                               bins = 10, #'auto', 'fd','doane', 'scott', 'stone', 'rice', 'sturges', 'sqrt'
+	                               density = False, 
+								   label = 'Predicted FTL',
+	                               color='blue',
+								   edgecolor = 'black', 
+	                               alpha=0.3)
+		# Save the graph
+		plt.xlabel(u'Track length (µm)')
+		plt.ylabel(u'Counts')
+		plt.legend(loc = 'best')
+		plt.title(graphtitle)
+		plt.savefig(graphpath + '/FTL/' + graphtitle +'_FTL_sample' + str(k+1) + '.pdf')
+		fig4.clear()
 
 	return
 
@@ -870,13 +911,13 @@ def PlotPecubeForward(datafnme, inputdata, inputdataPTt = None, outputdataPTt = 
 
 		# Check if FTL input files are there...
 		if (inputdataFTL and outputdataFTL) and (not os.path.isfile(inputdataFTL) or not os.path.isfile(outputdataFTL)):
-			print(u'\n \033[91mWarning:\033[00m No %s and/or %s file, I am skipping the PTt plot...\n' % (inputdataFLT, outputdataFTL))
+			print(u'\n \033[91mWarning:\033[00m No %s and/or %s file, I am skipping the PTt plot...\n' % (inputdataFTL, outputdataFTL))
 			#inputdataFTL = None
 			#outputdataFTL = None
 		else:
 			# Make the output folder in Graphs/
-			if os.path.exists(graphpath + '/MTL') == False:
-				os.mkdir(graphpath + '/MTL')
+			if os.path.exists(graphpath + '/FTL') == False:
+				os.mkdir(graphpath + '/FTL')
 			# Call the function to plot the MTL
 			# Input file, comparefile, 
 			plotMTL(inputdataFTL = inputdataFTL, 
