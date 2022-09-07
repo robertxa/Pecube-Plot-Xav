@@ -409,7 +409,8 @@ def plotgfit(data1D, i, pars, ipeak = None):
                ymin = 0, 
                ymax = max(gaussian(data1D.T[2*i], *pars)),
                colors = 'red',
-               label = 'Mean value %s (%0.2f %s)\n%0.2f +/- %0.2f' %(ipeak, pars[0]*100, chr(37), pars[1], pars[2]))
+               label = 'Mean value %s (%0.1f %s)\n%0.1f +/- %0.1f' %(ipeak, pars[0]*100, chr(37), pars[1], pars[2]))
+    #           label = 'Mean value %s (%0.2f %s)\n%0.2f +/- %0.2f' %(ipeak, pars[0]*100, chr(37), pars[1], pars[2]))
 
     # End of plot
     return
