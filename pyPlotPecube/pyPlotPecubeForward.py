@@ -637,7 +637,7 @@ def plotMTL(inputdataFTL, outputdataFTL = None,
 			changes = False
 			for k in range (0, len(lines)-1):
 				if lines[k] != '':
-					# Remove the ',' at the eand of the line if there is one
+					# Remove the ',' at the end of the line if there is one
 					if lines[k][-2] == ',' :
 						if lines[k][-1] != ',' :
 							lines[k] = lines[k][0:-2]+lines[k][-1]

@@ -358,7 +358,7 @@ def gaussians(x, *gaussians_param):#amp1, cen1, sigma1, amp2, cen2, sigma2):
 
     RETURNS:
         gaussians_results (np.array of floats): results of the sum of several Gaussian functions.
-                                                Th size is the same than the input vector x.
+                                                The size is the same than the input vector x.
     """
     
     # Clear the variable
